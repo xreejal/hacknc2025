@@ -1,0 +1,244 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "email": "john@example.com",
+      "displayName": "JohnTrader",
+      "bio": "Long-term investor",
+      "joinedAt": "2024-01-15T00:00:00Z",
+      "role": "user",
+      "reputation": 523,
+      "followedTickers": ["1", "3"]
+    },
+    {
+      "id": "u2",
+      "email": "sarah@example.com",
+      "displayName": "SarahAnalyst",
+      "bio": "Tech analyst",
+      "joinedAt": "2024-03-20T00:00:00Z",
+      "role": "user",
+      "reputation": 1247,
+      "followedTickers": ["1", "2", "4"]
+    }
+  ],
+  "tickers": [
+    {
+      "id": "1",
+      "symbol": "AAPL",
+      "companyName": "Apple Inc.",
+      "exchange": "NASDAQ",
+      "sector": "Technology",
+      "lastPrice": 178.25,
+      "priceChange24h": 2.35,
+      "priceChangePercent24h": 1.34
+    },
+    {
+      "id": "2",
+      "symbol": "TSLA",
+      "companyName": "Tesla, Inc.",
+      "exchange": "NASDAQ",
+      "sector": "Automotive",
+      "lastPrice": 242.50,
+      "priceChange24h": -5.20,
+      "priceChangePercent24h": -2.10
+    },
+    {
+      "id": "3",
+      "symbol": "MSFT",
+      "companyName": "Microsoft Corporation",
+      "exchange": "NASDAQ",
+      "sector": "Technology",
+      "lastPrice": 338.11,
+      "priceChange24h": 4.12,
+      "priceChangePercent24h": 1.23
+    },
+    {
+      "id": "4",
+      "symbol": "GOOGL",
+      "companyName": "Alphabet Inc.",
+      "exchange": "NASDAQ",
+      "sector": "Technology",
+      "lastPrice": 139.75,
+      "priceChange24h": 1.25,
+      "priceChangePercent24h": 0.90
+    }
+  ],
+  "events": [
+    {
+      "id": "e1",
+      "tickerId": "1",
+      "eventType": "EARNING",
+      "eventDate": "2025-10-30",
+      "description": "Q4 2025 Earnings Call"
+    },
+    {
+      "id": "e2",
+      "tickerId": "2",
+      "eventType": "EARNING",
+      "eventDate": "2025-10-25",
+      "description": "Q3 2025 Earnings Release"
+    },
+    {
+      "id": "e3",
+      "tickerId": "1",
+      "eventType": "DIVIDEND",
+      "eventDate": "2025-11-15",
+      "description": "Quarterly Dividend Payment"
+    }
+  ],
+  "sentimentAnalysis": [
+    {
+      "id": "s1",
+      "eventId": "e1",
+      "computedAt": "2025-10-11T10:00:00Z",
+      "aggregateLabel": "BULLISH",
+      "confidence": 72,
+      "summaryText": "Analysts expect strong iPhone sales and service revenue growth driven by AI features."
+    },
+    {
+      "id": "s2",
+      "eventId": "e2",
+      "computedAt": "2025-10-11T09:30:00Z",
+      "aggregateLabel": "NEUTRAL",
+      "confidence": 58,
+      "summaryText": "Mixed outlook with production challenges offset by strong Cybertruck demand."
+    }
+  ],
+  "articles": [
+    {
+      "id": "a1",
+      "tickerId": "1",
+      "url": "https://example.com/article1",
+      "title": "Apple CEO Highlights AI Integration in Upcoming Products",
+      "snippet": "Tim Cook discusses how artificial intelligence will transform the user experience across Apple's ecosystem.",
+      "publisher": "TechCrunch",
+      "publishedAt": "2025-10-10T14:30:00Z",
+      "fetchedAt": "2025-10-10T15:00:00Z",
+      "sentimentScore": 0.75,
+      "isEventRelated": true
+    },
+    {
+      "id": "a2",
+      "tickerId": "1",
+      "url": "https://example.com/article2",
+      "title": "Analysts Raise AAPL Price Target Ahead of Earnings",
+      "snippet": "Wall Street analysts increase price targets citing strong service revenue and iPhone 16 demand.",
+      "publisher": "Bloomberg",
+      "publishedAt": "2025-10-09T11:20:00Z",
+      "fetchedAt": "2025-10-09T11:45:00Z",
+      "sentimentScore": 0.85,
+      "isEventRelated": true
+    },
+    {
+      "id": "a3",
+      "tickerId": "2",
+      "url": "https://example.com/article3",
+      "title": "Tesla Production Figures Miss Estimates",
+      "snippet": "Q3 production numbers fall short of analyst expectations, citing supply chain issues.",
+      "publisher": "Reuters",
+      "publishedAt": "2025-10-08T09:15:00Z",
+      "fetchedAt": "2025-10-08T09:30:00Z",
+      "sentimentScore": -0.45,
+      "isEventRelated": true
+    }
+  ],
+  "threads": [
+    {
+      "id": "t1",
+      "scopeType": "TICKER",
+      "scopeId": "1",
+      "title": "AAPL Trading Strategy Discussion",
+      "authorId": "u1",
+      "createdAt": "2025-10-09T16:20:00Z",
+      "postCount": 23,
+      "lastPostAt": "2025-10-11T08:45:00Z"
+    },
+    {
+      "id": "t2",
+      "scopeType": "EVENT",
+      "scopeId": "e1",
+      "title": "Q4 Earnings Predictions",
+      "authorId": "u2",
+      "createdAt": "2025-10-10T10:00:00Z",
+      "postCount": 15,
+      "lastPostAt": "2025-10-11T07:30:00Z"
+    }
+  ],
+  "posts": [
+    {
+      "id": "p1",
+      "threadId": "t1",
+      "authorId": "u1",
+      "content": "Based on historical trends and current market conditions, I believe AAPL will beat earnings expectations. The iPhone 16 launch has been strong, and services revenue continues to grow. What are your thoughts?",
+      "createdAt": "2025-10-09T16:20:00Z",
+      "upvotes": 15,
+      "flags": 0
+    },
+    {
+      "id": "p2",
+      "threadId": "t1",
+      "authorId": "u2",
+      "content": "I agree. Plus, their guidance for Q1 2026 will be crucial. AI features should drive upgrades.",
+      "createdAt": "2025-10-10T12:30:00Z",
+      "upvotes": 8,
+      "flags": 0
+    }
+  ],
+  "communitySentiment": [
+    {
+      "scopeType": "TICKER",
+      "scopeId": "1",
+      "bullish": 145,
+      "neutral": 32,
+      "bearish": 28,
+      "totalVotes": 205
+    },
+    {
+      "scopeType": "EVENT",
+      "scopeId": "e1",
+      "bullish": 145,
+      "neutral": 32,
+      "bearish": 28,
+      "totalVotes": 205
+    }
+  ],
+  "watchlist": [
+    {
+      "userId": "current-user",
+      "tickerId": "1",
+      "addedAt": "2025-09-01T00:00:00Z"
+    },
+    {
+      "userId": "current-user",
+      "tickerId": "2",
+      "addedAt": "2025-09-15T00:00:00Z"
+    },
+    {
+      "userId": "current-user",
+      "tickerId": "3",
+      "addedAt": "2025-10-01T00:00:00Z"
+    }
+  ],
+  "marketOverview": {
+    "sp500": {
+      "value": 4567.89,
+      "change": 0.45
+    },
+    "nasdaq": {
+      "value": 14234.56,
+      "change": 0.78
+    },
+    "dow": {
+      "value": 34567.12,
+      "change": -0.12
+    }
+  },
+  "trending": [
+    { "symbol": "TSLA", "mentions": 1234 },
+    { "symbol": "AAPL", "mentions": 987 },
+    { "symbol": "NVDA", "mentions": 856 },
+    { "symbol": "MSFT", "mentions": 743 },
+    { "symbol": "GOOGL", "mentions": 621 }
+  ]
+}
+
