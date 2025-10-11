@@ -11,42 +11,44 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      // In a real app, this would search and navigate to results
       navigate(`/ticker/${searchQuery.toUpperCase()}`)
     }
   }
 
   return (
-    <header className="top-0 z-50 sticky bg-background/95 supports-[backdrop-filter]:bg-background/60 backdrop-blur border-b w-full">
+    <header className="top-0 z-50 sticky bg-black/80 backdrop-blur-xl border-white/10 border-b w-full">
+      <div className="top-0 absolute inset-x-0 bg-gradient-to-r from-transparent via-purple to-transparent h-px" />
+      
       <div className="mx-auto px-4 container">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/dashboard" className="flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-primary" />
-            <span className="font-bold text-xl">FinanceHub</span>
+          <Link to="/dashboard" className="group flex items-center gap-3">
+            <div className="relative">
+              <TrendingUp className="w-7 h-7 text-purple group-hover:scale-110 transition-transform" />
+              <div className="absolute inset-0 bg-purple/50 opacity-0 group-hover:opacity-100 blur-lg transition-opacity" />
+            </div>
+            <span className="font-black text-xl tracking-tight">APEX CAPITAL</span>
           </Link>
 
-          {/* Search Bar */}
           <form onSubmit={handleSearch} className="flex-1 mx-8 max-w-md">
             <div className="relative">
-              <Search className="top-1/2 left-3 absolute w-4 h-4 text-muted-foreground -translate-y-1/2 transform" />
+              <Search className="top-1/2 left-3 absolute w-4 h-4 text-gray-500 -translate-y-1/2 transform" />
               <Input
                 type="text"
-                placeholder="Search tickers (e.g., AAPL, TSLA)..."
-                className="pl-10"
+                placeholder="Search symbols..."
+                className="bg-white/5 pl-10 border-white/10 focus:border-purple/50 font-mono text-white placeholder:text-gray-500"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </form>
 
-          {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="relative text-white hover:text-purple">
               <Bell className="w-5 h-5" />
+              <span className="top-1 right-1 absolute bg-purple rounded-full w-2 h-2 animate-pulse" />
             </Button>
             <Link to="/profile">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-white hover:text-purple">
                 <User className="w-5 h-5" />
               </Button>
             </Link>
@@ -56,4 +58,3 @@ export default function Header() {
     </header>
   )
 }
-

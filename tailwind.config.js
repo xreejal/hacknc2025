@@ -51,18 +51,25 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        bullish: {
-          DEFAULT: "hsl(142, 76%, 36%)",
-          light: "hsl(142, 76%, 96%)",
+        purple: {
+          DEFAULT: "#8B5CF6",
+          dark: "#7C3AED",
+          light: "#A78BFA",
         },
-        bearish: {
-          DEFAULT: "hsl(0, 84%, 60%)",
-          light: "hsl(0, 84%, 96%)",
+        chartGreen: {
+          DEFAULT: "#10B981",
+          dark: "#059669",
+          light: "#34D399",
         },
-        neutral: {
-          DEFAULT: "hsl(214, 32%, 50%)",
-          light: "hsl(214, 32%, 96%)",
+        chartRed: {
+          DEFAULT: "#EF4444",
+          dark: "#DC2626",
+          light: "#F87171",
         },
+      },
+      fontFamily: {
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
       },
       borderRadius: {
         lg: "var(--radius)",
