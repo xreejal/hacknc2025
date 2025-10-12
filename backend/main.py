@@ -410,7 +410,7 @@ async def generate_voice_news(request: VoiceNewsRequest):
     """Generate voice news using ElevenLabs - Warren Buffett style"""
     try:
 
-        voice_id = "EXAVITQu4vr4xnSDxMaL"  # Bella - clear, professional female voice
+        voice_id = "VR6AewLTigWG4xSOukaG"  # Josh - rare, distinctive male voice
 
         # Generate audio with professional news anchor characteristics
         audio = elevenlabs.generate(
@@ -418,9 +418,9 @@ async def generate_voice_news(request: VoiceNewsRequest):
             voice=voice_id,
             model="eleven_multilingual_v2",
             voice_settings={
-                "stability": 0.7,  # Good stability for clear speech
-                "similarity_boost": 0.8,  # Good similarity for clear pronunciation
-                "style": 0.3,  # Moderate style for engaging delivery
+                "stability": 0.75,  # Good stability while preserving unique characteristics
+                "similarity_boost": 0.85,  # High similarity for clear pronunciation
+                "style": 0.4,  # Higher style to showcase the rare voice's distinctive qualities
                 "use_speaker_boost": True
             }
         )
