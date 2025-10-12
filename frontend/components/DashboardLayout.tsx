@@ -12,23 +12,32 @@ import Onboarding from "./Onboarding";
 import StockPillsContainer from "./StockPillsContainer";
 import { stockList } from "@/lib/stockList";
 import type { NewsArticle } from "@/lib/api";
+import { X } from "lucide-react";
 
 interface DashboardLayoutProps {
   trackedStocks: string[];
   onAddStock: (ticker: string) => void;
   onRemoveStock: (ticker: string) => void;
+  onChatVisibilityChange?: (isVisible: boolean) => void;
 }
 
 export default function DashboardLayout({
   trackedStocks,
   onAddStock,
-  onRemoveStock
+  onRemoveStock,
+  onChatVisibilityChange
 }: DashboardLayoutProps) {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [chatInitialMessage, setChatInitialMessage] = useState<string>("");
+
+  // Effect to handle WealthVisor chat button visibility when switching sections
+  useEffect(() => {
+    // Hide the WealthVisor button when on the chat page
+    onChatVisibilityChange?.(activeSection === "chat");
+  }, [activeSection, onChatVisibilityChange]);
 
   // Show onboarding for new users
   useEffect(() => {
@@ -57,21 +66,21 @@ export default function DashboardLayout({
   };
 
   const handleSentimentClick = async (article: NewsArticle) => {
-    // Auto-collapse sidebar to make space
-    setIsSidebarCollapsed(true);
-
-    // Show chat and generate sentiment explanation
-    setShowChat(true);
-
     // Simplified sentiment explanation prompt
     const prompt = `Explain why this article about ${article.ticker} is ${article.sentiment}:\n\n"${article.title}"\n\n${article.summary}`;
 
+    // Set the initial message for the chat
     setChatInitialMessage(prompt);
+
+    // Show the chat overlay
+    setShowChat(true);
+    onChatVisibilityChange?.(true);
   };
 
   const handleCloseChat = () => {
     setShowChat(false);
     setChatInitialMessage("");
+    onChatVisibilityChange?.(false);
   };
 
   const renderContent = () => {
@@ -143,13 +152,13 @@ export default function DashboardLayout({
         return (
           <div className="space-y-6">
             <div className="mb-8">
-              <h1 
+              <h1
                 className="mb-3 font-black text-5xl tracking-tight"
                 style={{
                   textShadow: '0 0 10px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.08)'
                 }}
               >
-                AI <span 
+                AI <span
                   className="text-gradient-green"
                   style={{
                     textShadow: '0 0 10px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.1)'
@@ -246,24 +255,32 @@ export default function DashboardLayout({
           </main>
         </div>
 
-        {/* AI Chat Panel */}
-        {showChat && (
-          <div className="fixed bottom-0 right-0 w-full md:w-96 h-96 md:h-[500px] bg-black/95 backdrop-blur-xl border-t md:border-l border-white/10 z-30">
-            <div className="flex items-center justify-between p-3 border-b border-white/10">
-              <h3 className="font-bold text-base text-white">AI Sentiment Analysis</h3>
-              <button
-                onClick={handleCloseChat}
-                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="h-[calc(100%-48px)]">
-              <AgentChat
-                initialMessage={chatInitialMessage}
-                autoSend={true}
-                placeholder="Ask about this article..."
-              />
+        {/* Full-Height AI Chat Overlay - Hidden when on chat section */}
+        {showChat && activeSection !== "chat" && (
+          <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={handleCloseChat}>
+            <div
+              className="fixed right-0 top-0 h-screen w-full md:w-[500px] lg:w-[600px] bg-black/95 backdrop-blur-xl border-l border-white/10 shadow-2xl flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-white/10 bg-gradient-to-r from-purple/20 to-green/20">
+                <h3 className="font-bold text-lg text-white">AI Sentiment Analysis</h3>
+                <button
+                  onClick={handleCloseChat}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Chat Content - Full Height */}
+              <div className="flex-1 overflow-hidden">
+                <AgentChat
+                  initialMessage={chatInitialMessage}
+                  autoSend={true}
+                  placeholder="Ask about this article..."
+                />
+              </div>
             </div>
           </div>
         )}

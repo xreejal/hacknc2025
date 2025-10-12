@@ -106,13 +106,16 @@ export default function Sidebar({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center gap-3"
+                className="flex items-center justify-center flex-1"
               >
-                <div className="relative">
-                  <TrendingUp className="w-7 h-7 text-green" />
-                  <div className="absolute inset-0 bg-green/50 blur-lg" />
-                </div>
-                <span className="font-black text-2xl tracking-tight text-green">MoneyMoves</span>
+                <span
+                  className="font-bold text-2xl text-white"
+                  style={{
+                    textShadow: '0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.2), 0 0 30px rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  Menu
+                </span>
               </motion.div>
             )}
           </AnimatePresence>

@@ -1,6 +1,9 @@
 "use client";
 
 import { Search } from "lucide-react";
+=======
+import { Search, TrendingUp } from "lucide-react";
+>>>>>>> 886bbad2e39948efa330d20dbba3c0d3e5fc741e
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -19,8 +22,8 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
       
       <div className="px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Left Section */}
-          <div className="flex items-center gap-4">
+          {/* Left Section - Menu Button */}
+          <div className="flex items-center gap-3">
             <button
               onClick={onToggleSidebar}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors lg:hidden"

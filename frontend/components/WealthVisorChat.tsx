@@ -9,7 +9,11 @@ type ChatMessage = {
   content: string;
 };
 
-export default function WealthVisorChat() {
+interface WealthVisorChatProps {
+  hideButton?: boolean;
+}
+
+export default function WealthVisorChat({ hideButton = false }: WealthVisorChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -117,7 +121,9 @@ export default function WealthVisorChat() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 bg-green hover:bg-green/90 text-white rounded-full p-5 shadow-lg hover:scale-110 transition-all duration-200 flex items-center gap-3 group"
+        className={`fixed bottom-6 right-6 z-50 bg-green hover:bg-green/90 text-white rounded-full p-5 shadow-lg hover:scale-110 flex items-center gap-3 group transition-all duration-300 ${
+          hideButton ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
         style={{
           boxShadow: '0 0 20px rgba(16, 185, 129, 0.3), inset 0 0 10px rgba(16, 185, 129, 0.1)'
         }}
@@ -131,16 +137,16 @@ export default function WealthVisorChat() {
   }
 
   return (
-    <div 
+    <div
       ref={chatRef}
-      className={`fixed z-50 bg-black border border-green/30 rounded-xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
-        isMaximized 
-          ? 'top-4 left-4 right-4 bottom-4 w-auto h-auto' 
-          : 'bottom-6 right-6 w-[500px] h-[700px]'
+      className={`fixed z-50 bg-black border border-green/30 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+        isMaximized
+          ? 'inset-0 w-screen h-screen rounded-none'
+          : 'bottom-6 right-6 w-[500px] h-[700px] rounded-xl'
       }`}
       style={{
-        ...(!isMaximized ? { 
-          transform: `translate(${position.x}px, ${position.y}px)` 
+        ...(!isMaximized ? {
+          transform: `translate(${position.x}px, ${position.y}px)`
         } : {}),
         boxShadow: '0 0 35px rgba(16, 185, 129, 0.12), inset 0 0 25px rgba(16, 185, 129, 0.04)'
       }}
