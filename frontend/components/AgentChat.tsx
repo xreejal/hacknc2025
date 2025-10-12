@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 // Input removed; using Textarea for multi-line messages
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import ReactMarkdown from "react-markdown";
 
 type ChatMessage = {
   id: string;
@@ -124,7 +125,28 @@ export default function AgentChat({
                     : "bg-primary text-primary-foreground"
                 )}
               >
-                {m.content}
+                {m.role === "assistant" ? (
+                  <div className="prose prose-invert prose-sm max-w-none">
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        ul: ({ children }) => <ul className="mb-2 ml-4 list-disc">{children}</ul>,
+                        ol: ({ children }) => <ol className="mb-2 ml-4 list-decimal">{children}</ol>,
+                        li: ({ children }) => <li className="mb-1">{children}</li>,
+                        strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+                        em: ({ children }) => <em className="italic">{children}</em>,
+                        code: ({ children }) => <code className="bg-black/30 px-1 py-0.5 rounded text-xs">{children}</code>,
+                        h1: ({ children }) => <h1 className="font-bold text-base mb-2">{children}</h1>,
+                        h2: ({ children }) => <h2 className="font-bold text-sm mb-2">{children}</h2>,
+                        h3: ({ children }) => <h3 className="font-semibold text-sm mb-1">{children}</h3>,
+                      }}
+                    >
+                      {m.content}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  m.content
+                )}
               </div>
               {m.role === "user" && (
                 <div className="flex justify-center items-center bg-primary/10 mt-1 rounded-md w-7 h-7 text-primary">

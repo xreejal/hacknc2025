@@ -5,16 +5,13 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import Dashboard from "./Dashboard";
 import AddStockForm from "./AddStockForm";
-import NewsFeed from "./NewsFeed";
 import NewsFeedForStocks from "./NewsFeedForStocks";
 import AgentChat from "./AgentChat";
 import VoiceNewsButton from "./VoiceNewsButton";
 import Onboarding from "./Onboarding";
 import StockPillsContainer from "./StockPillsContainer";
-import ArticlePreviewPanel from "./ArticlePreviewPanel";
 import { stockList } from "@/lib/stockList";
 import type { NewsArticle } from "@/lib/api";
-import { explainSentiment } from "@/lib/api";
 
 interface DashboardLayoutProps {
   trackedStocks: string[];
@@ -30,7 +27,6 @@ export default function DashboardLayout({
   const [activeSection, setActiveSection] = useState("dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [chatInitialMessage, setChatInitialMessage] = useState<string>("");
 
@@ -64,32 +60,13 @@ export default function DashboardLayout({
     // Auto-collapse sidebar to make space
     setIsSidebarCollapsed(true);
 
-    // Set the selected article
-    setSelectedArticle(article);
-
     // Show chat and generate sentiment explanation
     setShowChat(true);
 
-    // Generate sentiment explanation prompt
-    const prompt = `Analyze this financial news article and explain why it has been classified as '${article.sentiment}' sentiment.
-
-Article Details:
-- Title: ${article.title}
-- Summary: ${article.summary}
-- Ticker: ${article.ticker}
-- Sentiment: ${article.sentiment}
-
-Please provide a detailed explanation covering:
-1. Key phrases or words that influenced the sentiment classification
-2. The overall tone and context of the article
-3. Why this sentiment rating makes sense for ${article.ticker}
-4. What this means for potential investors`;
+    // Simplified sentiment explanation prompt
+    const prompt = `Explain why this article about ${article.ticker} is ${article.sentiment}:\n\n"${article.title}"\n\n${article.summary}`;
 
     setChatInitialMessage(prompt);
-  };
-
-  const handleCloseArticlePanel = () => {
-    setSelectedArticle(null);
   };
 
   const handleCloseChat = () => {
@@ -221,16 +198,9 @@ Please provide a detailed explanation covering:
           </main>
         </div>
 
-        {/* Article Preview Panel */}
-        <ArticlePreviewPanel
-          article={selectedArticle}
-          isOpen={selectedArticle !== null}
-          onClose={handleCloseArticlePanel}
-        />
-
         {/* AI Chat Panel */}
         {showChat && (
-          <div className="fixed bottom-0 right-0 w-full md:w-96 h-96 md:h-[500px] bg-black/95 backdrop-blur-xl border-t md:border-l border-white/10 z-20 md:mr-96">
+          <div className="fixed bottom-0 right-0 w-full md:w-96 h-96 md:h-[500px] bg-black/95 backdrop-blur-xl border-t md:border-l border-white/10 z-30">
             <div className="flex items-center justify-between p-3 border-b border-white/10">
               <h3 className="font-bold text-base text-white">AI Sentiment Analysis</h3>
               <button
