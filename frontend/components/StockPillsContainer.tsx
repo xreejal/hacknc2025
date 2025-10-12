@@ -26,6 +26,9 @@ export default function StockPillsContainer({
         <button
           onClick={onAddStock}
           className="flex items-center gap-2 bg-green/20 hover:bg-green/30 border border-green/30 px-4 py-2 rounded-full transition-colors"
+          style={{
+            boxShadow: '0 0 15px rgba(16, 185, 129, 0.1), inset 0 0 8px rgba(16, 185, 129, 0.05)'
+          }}
         >
           <Plus className="w-5 h-5" />
           <span className="text-base font-medium">Add Stock</span>
@@ -58,6 +61,9 @@ export default function StockPillsContainer({
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-colors text-base"
+          style={{
+            boxShadow: '0 0 12px rgba(16, 185, 129, 0.08), inset 0 0 6px rgba(16, 185, 129, 0.03)'
+          }}
         >
           <TrendingUp className="w-5 h-5" />
           <span>
@@ -70,6 +76,9 @@ export default function StockPillsContainer({
         <button
           onClick={onAddStock}
           className="flex items-center gap-2 bg-green/20 hover:bg-green/30 border border-green/30 px-4 py-2 rounded-full transition-colors"
+          style={{
+            boxShadow: '0 0 15px rgba(16, 185, 129, 0.1), inset 0 0 8px rgba(16, 185, 129, 0.05)'
+          }}
         >
           <Plus className="w-5 h-5" />
           <span className="text-base font-medium">Add</span>

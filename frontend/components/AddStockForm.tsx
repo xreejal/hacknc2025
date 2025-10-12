@@ -94,9 +94,26 @@ export default function AddStockForm({ onAddStock, stockList = [] }: AddStockFor
   };
 
   return (
-    <div className="z-10 relative bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 mb-6">
-      <h2 className="font-black text-xl text-white mb-4 tracking-tight">
-        ADD <span className="text-gradient-purple">STOCK</span>
+    <div 
+      className="z-10 relative bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 mb-6"
+      style={{
+        boxShadow: '0 0 25px rgba(16, 185, 129, 0.06), inset 0 0 15px rgba(16, 185, 129, 0.02)'
+      }}
+    >
+      <h2 
+        className="font-black text-xl text-white mb-4 tracking-tight"
+        style={{
+          textShadow: '0 0 6px rgba(255, 255, 255, 0.15), 0 0 12px rgba(255, 255, 255, 0.08)'
+        }}
+      >
+        ADD <span 
+          className="text-gradient-purple"
+          style={{
+            textShadow: '0 0 6px rgba(139, 92, 246, 0.2), 0 0 12px rgba(139, 92, 246, 0.1)'
+          }}
+        >
+          STOCK
+        </span>
       </h2>
       <form onSubmit={handleSubmit} className="flex gap-4">
         <div className="relative flex-1" ref={dropdownRef}>

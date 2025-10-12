@@ -88,8 +88,20 @@ export default function DashboardLayout({
         return (
           <div className="space-y-6">
             <div className="mb-8">
-              <h1 className="mb-3 font-black text-5xl tracking-tight">
-                ADD <span className="text-gradient-green">STOCKS</span>
+              <h1 
+                className="mb-3 font-black text-5xl tracking-tight"
+                style={{
+                  textShadow: '0 0 10px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.08)'
+                }}
+              >
+                ADD <span 
+                  className="text-gradient-green"
+                  style={{
+                    textShadow: '0 0 10px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.1)'
+                  }}
+                >
+                  STOCKS
+                </span>
               </h1>
               <p className="text-gray-400 text-lg">
                 Search and add stocks to your tracking portfolio
@@ -102,8 +114,20 @@ export default function DashboardLayout({
         return (
           <div className="space-y-6">
             <div className="mb-8">
-              <h1 className="mb-3 font-black text-5xl tracking-tight">
-                NEWS <span className="text-gradient-green">FEED</span>
+              <h1 
+                className="mb-3 font-black text-5xl tracking-tight"
+                style={{
+                  textShadow: '0 0 10px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.08)'
+                }}
+              >
+                NEWS <span 
+                  className="text-gradient-green"
+                  style={{
+                    textShadow: '0 0 10px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.1)'
+                  }}
+                >
+                  FEED
+                </span>
               </h1>
               <p className="text-gray-400 text-lg">
                 Latest market news and analysis for your tracked stocks
@@ -119,8 +143,20 @@ export default function DashboardLayout({
         return (
           <div className="space-y-6">
             <div className="mb-8">
-              <h1 className="mb-3 font-black text-5xl tracking-tight">
-                AI <span className="text-gradient-green">CHAT</span>
+              <h1 
+                className="mb-3 font-black text-5xl tracking-tight"
+                style={{
+                  textShadow: '0 0 10px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.08)'
+                }}
+              >
+                AI <span 
+                  className="text-gradient-green"
+                  style={{
+                    textShadow: '0 0 10px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.1)'
+                  }}
+                >
+                  CHAT
+                </span>
               </h1>
               <p className="text-gray-400 text-lg">
                 Chat with WealthVisor AI for market insights
@@ -133,8 +169,20 @@ export default function DashboardLayout({
         return (
           <div className="space-y-6">
             <div className="mb-8">
-              <h1 className="mb-3 font-black text-5xl tracking-tight">
-                VOICE <span className="text-gradient-green">NEWS</span>
+              <h1 
+                className="mb-3 font-black text-5xl tracking-tight"
+                style={{
+                  textShadow: '0 0 10px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.08)'
+                }}
+              >
+                VOICE <span 
+                  className="text-gradient-green"
+                  style={{
+                    textShadow: '0 0 10px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.1)'
+                  }}
+                >
+                  NEWS
+                </span>
               </h1>
               <p className="text-gray-400 text-lg">
                 Listen to AI-generated market commentary

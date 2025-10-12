@@ -91,7 +91,11 @@ export default function Sidebar({
           lg:relative
           transition-transform duration-300 ease-in-out
           ${isCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
+          shadow-[0_0_20px_rgba(16,185,129,0.1)] shadow-green/20
         `}
+        style={{
+          boxShadow: '0 0 30px rgba(16, 185, 129, 0.08), inset 0 0 20px rgba(16, 185, 129, 0.03)'
+        }}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
@@ -152,7 +156,14 @@ export default function Sidebar({
                       transition={{ duration: 0.2 }}
                       className="flex-1 text-left overflow-hidden"
                     >
-                      <div className="font-semibold text-base whitespace-nowrap">{item.label}</div>
+                      <div 
+                        className="font-semibold text-base whitespace-nowrap"
+                        style={{
+                          textShadow: '0 0 4px rgba(255, 255, 255, 0.1), 0 0 8px rgba(255, 255, 255, 0.05)'
+                        }}
+                      >
+                        {item.label}
+                      </div>
                       <div className="text-sm text-gray-400 whitespace-nowrap">{item.description}</div>
                     </motion.div>
                   )}

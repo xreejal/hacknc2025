@@ -43,10 +43,20 @@ export default function ArticlePreviewPanel({ article, isOpen, onClose }: Articl
           exit={{ x: "100%", opacity: 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           className="fixed right-0 top-0 h-full w-full md:w-96 bg-black/95 backdrop-blur-xl border-l border-white/10 z-30 flex flex-col"
+          style={{
+            boxShadow: '0 0 30px rgba(16, 185, 129, 0.08), inset 0 0 20px rgba(16, 185, 129, 0.03)'
+          }}
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
-            <h3 className="font-bold text-lg text-white">Article Preview</h3>
+            <h3 
+              className="font-bold text-lg text-white"
+              style={{
+                textShadow: '0 0 15px rgba(255, 255, 255, 0.4), 0 0 30px rgba(255, 255, 255, 0.2)'
+              }}
+            >
+              Article Preview
+            </h3>
             <button
               onClick={onClose}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"

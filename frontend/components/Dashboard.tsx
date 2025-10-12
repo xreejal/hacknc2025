@@ -66,7 +66,12 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
   if (trackedStocks.length === 0) {
     return (
         <div className="text-center py-12">
-        <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8">
+        <div 
+          className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8"
+          style={{
+            boxShadow: '0 0 25px rgba(16, 185, 129, 0.06), inset 0 0 15px rgba(16, 185, 129, 0.02)'
+          }}
+        >
           <TrendingUp className="w-16 h-16 text-green mx-auto mb-4" />
           <h2 className="font-black text-3xl text-white mb-3 tracking-tight">
             START <span className="text-gradient-green">TRACKING</span>
@@ -111,7 +116,12 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
         </div>
 
         {loading && (
-          <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 mb-6">
+          <div 
+            className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 mb-6"
+            style={{
+              boxShadow: '0 0 25px rgba(16, 185, 129, 0.06), inset 0 0 15px rgba(16, 185, 129, 0.02)'
+            }}
+          >
             <div className="text-center">
               <div className="animate-spin w-8 h-8 border-2 border-purple border-t-transparent rounded-full mx-auto mb-4"></div>
               <p className="text-gray-400">Loading data...</p>

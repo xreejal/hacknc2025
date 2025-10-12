@@ -76,7 +76,12 @@ export default function NewsSummaryPanel({
       />
 
       {/* Side Panel */}
-      <div className="fixed right-0 top-0 h-full w-full md:w-2/3 lg:w-1/2 bg-black border-l border-white/10 z-50 overflow-hidden flex flex-col">
+      <div 
+        className="fixed right-0 top-0 h-full w-full md:w-2/3 lg:w-1/2 bg-black border-l border-white/10 z-50 overflow-hidden flex flex-col"
+        style={{
+          boxShadow: '0 0 30px rgba(16, 185, 129, 0.08), inset 0 0 20px rgba(16, 185, 129, 0.03)'
+        }}
+      >
         {/* Header */}
         <div className="bg-black/80 backdrop-blur-xl border-b border-white/10 p-6">
           <div className="flex justify-between items-start">

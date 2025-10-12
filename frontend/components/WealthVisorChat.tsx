@@ -118,6 +118,9 @@ export default function WealthVisorChat() {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-50 bg-green hover:bg-green/90 text-white rounded-full p-5 shadow-lg hover:scale-110 transition-all duration-200 flex items-center gap-3 group"
+        style={{
+          boxShadow: '0 0 20px rgba(16, 185, 129, 0.3), inset 0 0 10px rgba(16, 185, 129, 0.1)'
+        }}
       >
         <MessageSquare className="w-7 h-7" />
         <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap font-semibold text-lg">
@@ -135,9 +138,12 @@ export default function WealthVisorChat() {
           ? 'top-4 left-4 right-4 bottom-4 w-auto h-auto' 
           : 'bottom-6 right-6 w-[500px] h-[700px]'
       }`}
-      style={!isMaximized ? { 
-        transform: `translate(${position.x}px, ${position.y}px)` 
-      } : {}}
+      style={{
+        ...(!isMaximized ? { 
+          transform: `translate(${position.x}px, ${position.y}px)` 
+        } : {}),
+        boxShadow: '0 0 35px rgba(16, 185, 129, 0.12), inset 0 0 25px rgba(16, 185, 129, 0.04)'
+      }}
     >
       {/* Header */}
       <div 
@@ -150,7 +156,14 @@ export default function WealthVisorChat() {
             <Bot className="w-7 h-7 text-white" />
           </div>
           <div>
-            <div className="font-black text-white text-lg">WealthVisor</div>
+            <div 
+              className="font-black text-white text-lg"
+              style={{
+                textShadow: '0 0 15px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 255, 255, 0.2)'
+              }}
+            >
+              WealthVisor
+            </div>
             <div className="text-white/80 text-sm">
               {isSending ? "Thinking..." : "Your AI Financial Advisor"}
             </div>

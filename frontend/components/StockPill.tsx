@@ -78,6 +78,9 @@ export default function StockPill({ ticker, onRemove, onViewDetails }: StockPill
       <div 
         className="flex-1 bg-black/40 backdrop-blur-sm border border-white/10 rounded-full px-4 py-2 hover:border-green/50 transition-all duration-200 cursor-pointer"
         onClick={onViewDetails}
+        style={{
+          boxShadow: '0 0 20px rgba(16, 185, 129, 0.05), inset 0 0 10px rgba(16, 185, 129, 0.02)'
+        }}
       >
         <div className="flex items-center gap-3">
           {/* Ticker */}

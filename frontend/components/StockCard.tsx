@@ -43,7 +43,12 @@ export default function StockCard({
 
   return (
     <>
-      <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 hover:border-purple/50 transition-all">
+      <div 
+        className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 hover:border-purple/50 transition-all"
+        style={{
+          boxShadow: '0 0 25px rgba(16, 185, 129, 0.06), inset 0 0 15px rgba(16, 185, 129, 0.02)'
+        }}
+      >
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
           <button

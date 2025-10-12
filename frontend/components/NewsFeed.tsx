@@ -26,9 +26,26 @@ export default function NewsFeed({ articles, onSentimentClick }: NewsFeedProps) 
   }
 
   return (
-    <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6">
-      <h2 className="font-black text-3xl text-white mb-6 tracking-tight">
-        NEWS <span className="text-gradient-green">FEED</span>
+    <div 
+      className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6"
+      style={{
+        boxShadow: '0 0 25px rgba(16, 185, 129, 0.06), inset 0 0 15px rgba(16, 185, 129, 0.02)'
+      }}
+    >
+      <h2 
+        className="font-black text-3xl text-white mb-6 tracking-tight"
+        style={{
+          textShadow: '0 0 8px rgba(255, 255, 255, 0.15), 0 0 16px rgba(255, 255, 255, 0.08)'
+        }}
+      >
+        NEWS <span 
+          className="text-gradient-green"
+          style={{
+            textShadow: '0 0 8px rgba(16, 185, 129, 0.2), 0 0 16px rgba(16, 185, 129, 0.1)'
+          }}
+        >
+          FEED
+        </span>
       </h2>
       <div className="space-y-4">
         {articles.map((article, index) => (
