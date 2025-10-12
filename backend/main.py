@@ -28,7 +28,7 @@ news_service = NewsService(
     news_api_key=os.getenv("NEWS_API_KEY"),
     finnhub_api_key=os.getenv("FINNHUB_API_KEY")
 )
-event_analyzer = EventAnalyzer()
+event_analyzer = EventAnalyzer(alpha_vantage_key=os.getenv("ALPHA_VANTAGE_KEY"))
 db = Database(os.getenv("DATABASE_URL"))
 
 # Pydantic models
