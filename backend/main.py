@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
@@ -11,6 +12,7 @@ from app.event_analyzer import EventAnalyzer
 from app.database import Database
 from app.agent import WealthVisorAgent
 from pathlib import Path
+from elevenlabs import ElevenLabs
 
 load_dotenv()
 
@@ -32,6 +34,9 @@ news_service = NewsService(
 )
 event_analyzer = EventAnalyzer(alpha_vantage_key=os.getenv("ALPHA_VANTAGE_KEY"))
 db = Database(os.getenv("DATABASE_URL"))
+
+# Initialize ElevenLabs
+elevenlabs = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
 
 # Initialize chat agent
 prompt_path = Path(__file__).resolve().parent / "app" / "Agent-Prompt copy.md"
@@ -98,6 +103,9 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     session_id: str
     reply: str
+
+class VoiceNewsRequest(BaseModel):
+    text: str
 
 @app.get("/")
 async def root():
@@ -396,6 +404,41 @@ async def get_chart_data(ticker: str, period: str) -> ChartData:
     except Exception as e:
         logging.error(f"Error fetching chart data for {ticker} - {period}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error fetching chart data: {str(e)}")
+
+@app.post("/voice-news")
+async def generate_voice_news(request: VoiceNewsRequest):
+    """Generate voice news using ElevenLabs - Warren Buffett style"""
+    try:
+
+        voice_id = "EXAVITQu4vr4xnSDxMaL"  # Bella - clear, professional female voice
+
+        # Generate audio with professional news anchor characteristics
+        audio = elevenlabs.generate(
+            text=request.text,
+            voice=voice_id,
+            model="eleven_multilingual_v2",
+            voice_settings={
+                "stability": 0.7,  # Good stability for clear speech
+                "similarity_boost": 0.8,  # Good similarity for clear pronunciation
+                "style": 0.3,  # Moderate style for engaging delivery
+                "use_speaker_boost": True
+            }
+        )
+        
+        # Convert to bytes
+        audio_bytes = b"".join(audio)
+        
+        return Response(
+            content=audio_bytes,
+            media_type="audio/mpeg",
+            headers={
+                "Content-Disposition": "attachment; filename=financial_news.mp3",
+                "Content-Length": str(len(audio_bytes))
+            }
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating voice: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

@@ -7,6 +7,7 @@ import { InteractiveGrid } from "@/components/InteractiveGrid";
 import { TrendingUp, Search } from "lucide-react";
 import { stockList } from "@/lib/stockList";
 import AgentChat from "@/components/AgentChat";
+import VoiceNewsButton from "@/components/VoiceNewsButton";
 
 export default function Home() {
   const [trackedStocks, setTrackedStocks] = useState<string[]>([]);
@@ -39,7 +40,8 @@ export default function Home() {
               <span className="font-black text-xl tracking-tight">STOCKLENS</span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
+              <VoiceNewsButton />
               <div className="flex items-center gap-2 bg-purple/10 px-4 py-2 border border-purple/30 rounded-full">
                 <Search className="w-4 h-4 text-purple" />
                 <span className="font-mono font-bold text-purple text-sm">FINANCIAL TRACKER</span>
