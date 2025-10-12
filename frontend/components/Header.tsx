@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { Search } from "lucide-react";
 =======
 import { Search, TrendingUp } from "lucide-react";
@@ -30,19 +31,25 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
             >
               <Search className="w-5 h-5" />
             </button>
-            
           </div>
 
-          {/* Center Section - Live Data */}
+          {/* Center Section - MoneyMoves Logo */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-base text-gray-400">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span>Live Data</span>
+            <div className="relative">
+              <TrendingUp className="w-7 h-7 text-green" />
+              <div className="absolute inset-0 bg-green/50 blur-lg" />
             </div>
+            <span className="font-black text-2xl tracking-tight text-green">MoneyMoves</span>
           </div>
 
+<<<<<<< HEAD
           {/* Right Section - Empty */}
           <div className="flex items-center gap-3">
+=======
+          {/* Right Section - Powered by Gemini */}
+          <div className="flex items-center gap-3">
+            <span className="text-gray-400 text-sm font-medium">Powered by Gemini 2.5</span>
+>>>>>>> 886bbad2e39948efa330d20dbba3c0d3e5fc741e
           </div>
         </div>
       </div>
