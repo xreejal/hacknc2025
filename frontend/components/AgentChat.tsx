@@ -67,11 +67,13 @@ export default function AgentChat({
         content: response.data.reply,
       };
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (e) {
+    } catch (e: any) {
+      console.error("Agent chat error:", e);
+      const errorMessage = e?.response?.data?.detail || e?.message || "Unknown error occurred";
       const assistantMessage: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: "Sorry, I couldn't reach the agent service.",
+        content: `Sorry, I couldn't reach the agent service. Error: ${errorMessage}`,
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } finally {

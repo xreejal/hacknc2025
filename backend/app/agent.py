@@ -35,10 +35,17 @@ class WealthVisorAgent:
         Decide which LLM provider to use based on env vars.
         Gemini-only: requires GOOGLE_API_KEY or GEMINI_API_KEY.
         """
-        gemini_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
-        if gemini_key:
-            model = os.getenv("GEMINI_MODEL", "gemini-1.5-pro")
+        google_key = os.getenv("GOOGLE_API_KEY")
+        gemini_key = os.getenv("GEMINI_API_KEY")
+        print(f"[Agent Debug] GOOGLE_API_KEY exists: {google_key is not None}")
+        print(f"[Agent Debug] GEMINI_API_KEY exists: {gemini_key is not None}")
+
+        final_key = google_key or gemini_key
+        if final_key:
+            model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+            print(f"[Agent Debug] Using Gemini with model: {model}")
             return "gemini", model
+        print("[Agent Debug] No API key found, using mock")
         return "none", "mock"
 
     def _init_client(self):
@@ -46,9 +53,12 @@ class WealthVisorAgent:
             try:
                 import google.generativeai as genai  # type: ignore
                 api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+                print(f"[Agent Debug] Configuring Gemini with API key: {api_key[:10]}...")
                 genai.configure(api_key=api_key)
+                print("[Agent Debug] Gemini client configured successfully")
                 return genai
-            except Exception:
+            except Exception as e:
+                print(f"[Agent Debug] Error initializing Gemini client: {e}")
                 return None
         return None
 
@@ -125,12 +135,19 @@ class WealthVisorAgent:
                 system_msg = next((m["content"] for m in history if m["role"] == "system"), "")
                 convo = [m for m in history if m["role"] != "system"]
 
+                # Combine system message into first user message
                 messages = []
+                if convo and system_msg:
+                    first_user_content = f"{system_msg}\n\nUser: {convo[0]['content']}"
+                    messages.append({"role": "user", "parts": [first_user_content]})
+                    convo = convo[1:]  # Skip first message since we included it
+
                 for m in convo:
                     role = "user" if m["role"] == "user" else "model"
                     messages.append({"role": role, "parts": [m["content"]]})
 
-                model = self.client.GenerativeModel(self.model, system_instruction=system_msg)
+                # Create model - use gemini-2.5-flash for latest stable model
+                model = self.client.GenerativeModel("gemini-2.5-flash")
                 response = model.generate_content(messages, generation_config={"temperature": 0.2})
                 return getattr(response, "text", "") or ""
             except Exception as e:
