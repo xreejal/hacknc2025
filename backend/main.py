@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import datetime
 import os
 from dotenv import load_dotenv
@@ -13,6 +13,7 @@ from app.database import Database
 from app.agent import WealthVisorAgent
 from pathlib import Path
 from elevenlabs import ElevenLabs
+import google.generativeai as genai
 
 load_dotenv()
 
@@ -37,6 +38,16 @@ db = Database(os.getenv("DATABASE_URL"))
 
 # Initialize ElevenLabs
 elevenlabs = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
+
+# Initialize Gemini AI
+gemini_api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+if gemini_api_key and gemini_api_key not in ["your_gemini_api_key_here", "placeholder_key", ""]:
+    genai.configure(api_key=gemini_api_key)
+    gemini_model = genai.GenerativeModel('gemini-pro')
+else:
+    # Configure with placeholder for voice news only
+    genai.configure(api_key="placeholder_key")
+    gemini_model = genai.GenerativeModel('gemini-pro')
 
 # Initialize chat agent
 prompt_path = Path(__file__).resolve().parent / "app" / "Agent-Prompt copy.md"
@@ -105,7 +116,7 @@ class ChatResponse(BaseModel):
     reply: str
 
 class VoiceNewsRequest(BaseModel):
-    text: str
+    tracked_stocks: List[str] = []
 
 @app.get("/")
 async def root():
@@ -405,16 +416,192 @@ async def get_chart_data(ticker: str, period: str) -> ChartData:
         logging.error(f"Error fetching chart data for {ticker} - {period}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error fetching chart data: {str(e)}")
 
+async def generate_ai_insights(tracked_stocks: List[str], stock_data: List[Dict]) -> str:
+    """Generate AI insights about tracked stocks using Gemini"""
+    try:
+        if not tracked_stocks or not stock_data:
+            return "Market analysts remain cautious about near-term volatility"
+        
+        # Prepare stock data summary for Gemini
+        stock_summary = []
+        for i, ticker in enumerate(tracked_stocks[:3]):  # Limit to 3 stocks
+            if i < len(stock_data):
+                data = stock_data[i]
+                stock_summary.append(
+                    f"{ticker}: ${data['current_price']:.2f} "
+                    f"({data['change_1d_percent']:+.1f}% today, "
+                    f"{data['change_1w_percent']:+.1f}% this week)"
+                )
+        
+        # Create prompt for Gemini
+        prompt = f"""
+        As a financial analyst, provide a brief 2-sentence market insight about these stocks:
+        {', '.join(stock_summary)}
+        
+        Focus on recent trends, market sentiment, and potential factors driving the performance.
+        Keep it concise and professional for a financial news broadcast.
+        """
+        
+        # Generate AI insights
+        try:
+            response = gemini_model.generate_content(prompt)
+            insights = response.text.strip()
+        except Exception as e:
+            print(f"Gemini API error: {e}")
+            # Fallback to basic analysis
+            if any(data['change_1d_percent'] > 0 for data in stock_data):
+                insights = "Market sentiment appears positive with several stocks showing gains today."
+            elif any(data['change_1d_percent'] < 0 for data in stock_data):
+                insights = "Market sentiment appears cautious with several stocks experiencing declines today."
+            else:
+                insights = "Market conditions remain stable with mixed performance across tracked stocks."
+        
+        # Ensure insights are concise (max 2 sentences)
+        sentences = insights.split('. ')
+        if len(sentences) > 2:
+            insights = '. '.join(sentences[:2]) + '.'
+        
+        return insights
+        
+    except Exception as e:
+        print(f"Error generating AI insights: {e}")
+        return "Market analysts remain cautious about near-term volatility"
+
+async def generate_watchlist_script(tracked_stocks: List[str]) -> str:
+    """Generate a 100-word script about tracked stocks and their news"""
+    try:
+        # Fetch news for tracked stocks
+        articles = await news_service.fetch_news_for_tickers(tracked_stocks)
+        
+        # Get comprehensive price data for each stock using our existing API
+        stock_summaries = []
+        stock_data_for_ai = []
+        for ticker in tracked_stocks[:3]:  # Limit to 3 stocks for 100-word limit
+            try:
+                # Use our existing price data endpoint
+                price_data = await get_price_data(ticker)
+                
+                # Store data for AI analysis
+                stock_data_for_ai.append({
+                    'ticker': ticker,
+                    'current_price': price_data.current_price,
+                    'change_1d_percent': price_data.change_1d_percent,
+                    'change_1w_percent': price_data.change_1w_percent
+                })
+                
+                # Create detailed stock summary with multiple timeframes
+                current_price = price_data.current_price
+                change_1d = price_data.change_1d
+                change_1d_percent = price_data.change_1d_percent
+                change_1w_percent = price_data.change_1w_percent
+                
+                # Determine trend direction
+                if change_1d_percent > 0:
+                    direction = "up"
+                    trend = "gaining"
+                elif change_1d_percent < 0:
+                    direction = "down"
+                    trend = "declining"
+                else:
+                    direction = "flat"
+                    trend = "holding steady"
+                
+                # Create comprehensive summary
+                if abs(change_1d_percent) > 5:
+                    intensity = "sharply" if abs(change_1d_percent) > 10 else "significantly"
+                else:
+                    intensity = "slightly"
+                
+                # Add weekly context if available
+                weekly_context = ""
+                if abs(change_1w_percent) > 10:
+                    weekly_trend = "up" if change_1w_percent > 0 else "down"
+                    weekly_context = f", {weekly_trend} {abs(change_1w_percent):.1f}% this week"
+                
+                stock_summaries.append(
+                    f"{ticker} is trading at ${current_price:.2f}, {intensity} {trend} {abs(change_1d_percent):.1f}% today{weekly_context}"
+                )
+                
+            except Exception as e:
+                print(f"Error fetching price data for {ticker}: {e}")
+                # Fallback for any errors
+                stock_summaries.append(f"{ticker} showing mixed signals in today's trading")
+        
+        # Get relevant news headlines with more context
+        news_headlines = []
+        for article in articles[:2]:  # Limit to 2 articles
+            # Handle both dict and object formats
+            if isinstance(article, dict):
+                title = article.get("title", "Market update")
+            else:
+                title = getattr(article, "title", "Market update")
+            
+            # Truncate title intelligently
+            if len(title) > 60:
+                title = title[:57] + "..."
+            news_headlines.append(f"Breaking: {title}")
+        
+        # Generate AI insights about the stocks
+        ai_insights = await generate_ai_insights(tracked_stocks, stock_data_for_ai)
+        
+        # Generate the script with more detailed insights
+        if stock_summaries:
+            stocks_text = ". ".join(stock_summaries)
+            news_text = ". ".join(news_headlines) if news_headlines else ""
+            
+            # Add market context based on overall performance
+            market_context = ""
+            if any("up" in summary for summary in stock_summaries):
+                market_context = " showing overall positive momentum"
+            elif any("down" in summary for summary in stock_summaries):
+                market_context = " facing some headwinds"
+            
+            # Combine all elements
+            script_parts = [
+                f"Welcome to The Scoop, your financial news update. {stocks_text}{market_context}",
+                f"AI Analysis: {ai_insights}",
+                news_text if news_text else "Market analysts remain cautious about near-term volatility",
+                "Stay tuned for more market insights and portfolio updates."
+            ]
+            
+            script = ". ".join(filter(None, script_parts)) + "."
+        else:
+            script = "Welcome to The Scoop, your financial news update. Your tracked stocks are showing mixed performance today. Market analysts remain cautious about near-term volatility. Stay tuned for more market insights and portfolio updates."
+        
+        # Ensure script is around 100 words
+        words = script.split()
+        if len(words) > 100:
+            script = " ".join(words[:100]) + "..."
+        elif len(words) < 80:
+            script += " Market conditions continue to evolve as investors navigate economic uncertainty."
+        
+        # Debug: Print the generated script
+        print(f"Generated script for {tracked_stocks}: {script}")
+        print(f"Script word count: {len(script.split())}")
+        
+        return script
+        
+    except Exception as e:
+        print(f"Error generating watchlist script: {e}")
+        return "Welcome to The Scoop, your financial news update. Market conditions are showing mixed signals today. Stay tuned for more updates on your portfolio performance and market movements."
+
 @app.post("/voice-news")
 async def generate_voice_news(request: VoiceNewsRequest):
-    """Generate voice news using ElevenLabs - Warren Buffett style"""
+    """Generate voice news using ElevenLabs with dynamic content"""
     try:
-
         voice_id = "VR6AewLTigWG4xSOukaG"  # Josh - rare, distinctive male voice
+
+        # Generate dynamic script based on tracked stocks
+        if not request.tracked_stocks:
+            # General market script when no stocks are tracked
+            script = "Welcome to The Scoop, your financial news update. Today's market shows mixed signals as investors navigate economic uncertainty. Tech stocks are showing resilience while energy sectors face headwinds. The Federal Reserve's latest comments suggest cautious optimism. Stay tuned for more updates on your portfolio performance and market movements."
+        else:
+            # Generate script about tracked stocks
+            script = await generate_watchlist_script(request.tracked_stocks)
 
         # Generate audio with professional news anchor characteristics
         audio = elevenlabs.generate(
-            text=request.text,
+            text=script,
             voice=voice_id,
             model="eleven_multilingual_v2",
             voice_settings={
