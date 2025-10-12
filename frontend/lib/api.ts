@@ -35,6 +35,29 @@ export interface UpcomingEvent {
   expected_impact: string;
 }
 
+export interface PriceData {
+  ticker: string;
+  current_price: number;
+  change_1d: number;
+  change_1w: number;
+  change_1m: number;
+  change_1d_percent: number;
+  change_1w_percent: number;
+  change_1m_percent: number;
+}
+
+export interface ChartDataPoint {
+  date: string;
+  price: number;
+  volume: number;
+}
+
+export interface ChartData {
+  ticker: string;
+  period: string;
+  data: ChartDataPoint[];
+}
+
 export const addTicker = async (ticker: string) => {
   const response = await api.post('/add_ticker', { ticker });
   return response.data;
@@ -57,6 +80,16 @@ export const getPastEvents = async (ticker: string) => {
 
 export const getUpcomingEvents = async (ticker: string) => {
   const response = await api.get<UpcomingEvent[]>(`/events/upcoming?ticker=${ticker}`);
+  return response.data;
+};
+
+export const getPriceData = async (ticker: string) => {
+  const response = await api.get<PriceData>(`/price/${ticker}`);
+  return response.data;
+};
+
+export const getChartData = async (ticker: string, period: string) => {
+  const response = await api.get<ChartData>(`/chart/${ticker}/${period}`);
   return response.data;
 };
 

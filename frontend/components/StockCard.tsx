@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { EventAnalysis, UpcomingEvent } from "@/lib/api";
 import { format } from "date-fns";
 import { TrendingUp, TrendingDown, X } from "lucide-react";
+import PriceDisplay from "./PriceDisplay";
 
 interface StockCardProps {
   ticker: string;
@@ -19,6 +20,7 @@ export default function StockCard({
   onRemove,
 }: StockCardProps) {
   const [showPast, setShowPast] = useState(true);
+  const [showPriceModal, setShowPriceModal] = useState(false);
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment.toLowerCase()) {
@@ -38,17 +40,23 @@ export default function StockCard({
   };
 
   return (
-    <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 hover:border-purple/50 transition-all">
-      {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <h3 className="font-mono font-black text-2xl text-white tracking-tight">{ticker}</h3>
-        <button
-          onClick={onRemove}
-          className="text-gray-400 hover:text-purple transition-colors p-1"
-        >
-          <X className="w-5 h-5" />
-        </button>
-      </div>
+    <>
+      <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 hover:border-purple/50 transition-all">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-4">
+          <button
+            onClick={() => setShowPriceModal(true)}
+            className="font-mono font-black text-2xl text-white tracking-tight hover:text-purple transition-colors cursor-pointer"
+          >
+            {ticker}
+          </button>
+          <button
+            onClick={onRemove}
+            className="text-gray-400 hover:text-purple transition-colors p-1"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
       {/* Toggle */}
       <div className="flex gap-2 mb-4">
@@ -145,6 +153,15 @@ export default function StockCard({
           <p className="text-gray-400 text-sm">No upcoming events</p>
         )}
       </div>
-    </div>
+      </div>
+
+      {/* Price Modal */}
+      {showPriceModal && (
+        <PriceDisplay
+          ticker={ticker}
+          onClose={() => setShowPriceModal(false)}
+        />
+      )}
+    </>
   );
 }
