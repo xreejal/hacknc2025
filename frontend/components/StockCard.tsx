@@ -3,8 +3,9 @@
 import { useState } from "react";
 import type { EventAnalysis, UpcomingEvent } from "@/lib/api";
 import { format } from "date-fns";
-import { TrendingUp, TrendingDown, X } from "lucide-react";
+import { TrendingUp, TrendingDown, X, Calendar } from "lucide-react";
 import PriceDisplay from "./PriceDisplay";
+import { addToGoogleCalendar } from "@/lib/calendar";
 
 interface StockCardProps {
   ticker: string;
@@ -137,15 +138,29 @@ export default function StockCard({
                 className="border-l-4 border-purple pl-3 py-2 bg-white/5 rounded hover:bg-white/10 transition-colors"
               >
                 <div className="flex justify-between items-start">
-                  <div>
+                  <div className="flex-1">
                     <p className="font-semibold text-white">{event.type}</p>
                     <p className="text-xs text-gray-400 font-mono">
                       {format(new Date(event.date), "MMM dd, yyyy")}
                     </p>
                   </div>
-                  <span className="text-xs px-2 py-1 bg-purple/10 text-purple border border-purple/30 rounded">
-                    {event.expected_impact}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs px-2 py-1 bg-purple/10 text-purple border border-purple/30 rounded">
+                      {event.expected_impact}
+                    </span>
+                    <button
+                      onClick={() => addToGoogleCalendar({
+                        title: event.type,
+                        description: `${ticker} - ${event.type} (Expected Impact: ${event.expected_impact})`,
+                        date: event.date,
+                        ticker: ticker
+                      })}
+                      className="p-1.5 bg-purple/20 hover:bg-purple/30 text-purple rounded transition-colors"
+                      title="Add to Google Calendar"
+                    >
+                      <Calendar className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))
