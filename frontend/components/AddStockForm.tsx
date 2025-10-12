@@ -19,7 +19,7 @@ export default function AddStockForm({ onAddStock }: AddStockFormProps) {
   };
 
   return (
-    <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 mb-6">
+    <div className="z-10 relative bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 mb-6">
       <h2 className="font-black text-xl text-white mb-4 tracking-tight">
         ADD <span className="text-gradient-purple">STOCK</span>
       </h2>
