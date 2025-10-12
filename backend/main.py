@@ -526,7 +526,7 @@ async def get_tracked_stocks() -> List[str]:
 
 
 async def generate_watchlist_script(tracked_stocks: List[str]) -> str:
-    """Generate a 100-word script about tracked stocks and their news"""
+    """Generate a ~100-word script about tracked stocks and their news, allowing sentences to complete naturally"""
     try:
         # Fetch news for tracked stocks
         articles = await news_service.fetch_news_for_tickers(tracked_stocks)
@@ -628,10 +628,27 @@ async def generate_watchlist_script(tracked_stocks: List[str]) -> str:
             tracked_stocks = await get_tracked_stocks()
             script = await generate_watchlist_script(tracked_stocks)
 
-        # Ensure script is around 100 words
+        # Ensure script is around 100 words, but allow sentences to complete naturally
         words = script.split()
         if len(words) > 100:
-            script = " ".join(words[:100]) + "..."
+            # Find the last complete sentence before the 100-word limit
+            truncated_words = words[:100]
+            truncated_script = " ".join(truncated_words)
+            
+            # Find the last complete sentence by looking for sentence endings
+            last_period = truncated_script.rfind('.')
+            last_exclamation = truncated_script.rfind('!')
+            last_question = truncated_script.rfind('?')
+            
+            # Use the last sentence ending found
+            last_sentence_end = max(last_period, last_exclamation, last_question)
+            
+            if last_sentence_end > 0:
+                # Keep the script up to the last complete sentence
+                script = truncated_script[:last_sentence_end + 1]
+            else:
+                # If no sentence ending found, just truncate and add ellipsis
+                script = truncated_script + "..."
         elif len(words) < 80:
             script += " Market conditions continue to evolve as investors navigate economic uncertainty."
 
@@ -739,6 +756,20 @@ async def generate_dynamic_voice_news():
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating dynamic voice: {str(e)}")
+
+@app.post("/voice-news/script")
+async def get_voice_news_script():
+    """Get the script text for voice news without generating audio"""
+    try:
+        # Get tracked stocks and generate dynamic script
+        tracked_stocks = await get_tracked_stocks()
+        script = await generate_watchlist_script(tracked_stocks)
+        print(f"Generated script for stocks: {tracked_stocks}")
+        
+        return {"script": script}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating script: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,7 +1,6 @@
 "use client";
 
 import { Search } from "lucide-react";
-import VoiceNewsButton from "./VoiceNewsButton";
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -39,9 +38,8 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
             </div>
           </div>
 
-          {/* Right Section - The Scoop */}
+          {/* Right Section - Empty */}
           <div className="flex items-center gap-3">
-            <VoiceNewsButton />
           </div>
         </div>
       </div>
