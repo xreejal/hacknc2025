@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import List, Optional, Dict
-from typing import List, Optional, Dict
 from datetime import datetime
 import os
 from dotenv import load_dotenv
@@ -15,7 +14,6 @@ from app.database import Database
 from app.agent import WealthVisorAgent
 from pathlib import Path
 from elevenlabs import ElevenLabs
-import google.generativeai as genai
 
 load_dotenv()
 
@@ -56,14 +54,10 @@ else:
     gemini_model = genai.GenerativeModel('gemini-pro')
 
 # Initialize chat agent
-# Ensure Gemini API key is available
+# Ensure Gemini API key is available for downstream clients
 gemini_api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 if gemini_api_key and not os.getenv("GOOGLE_API_KEY"):
     os.environ["GOOGLE_API_KEY"] = gemini_api_key
-
-# Initialize Gemini for AI insights
-genai.configure(api_key=gemini_api_key)
-gemini_model = genai.GenerativeModel('gemini-pro')
 
 prompt_path = Path(__file__).resolve().parent / "app" / "Agent-Prompt copy.md"
 agent = WealthVisorAgent(system_prompt_path=prompt_path, workspace_root=Path(__file__).resolve().parent.parent)
@@ -134,7 +128,6 @@ class SentimentExplanationRequest(BaseModel):
     article: NewsArticle
 
 class VoiceNewsRequest(BaseModel):
-    tracked_stocks: List[str] = []
     tracked_stocks: List[str] = []
 
 @app.get("/")
@@ -635,7 +628,6 @@ async def generate_watchlist_script(tracked_stocks: List[str]) -> str:
 @app.post("/voice-news")
 async def generate_voice_news(request: VoiceNewsRequest):
     """Generate voice news using ElevenLabs with dynamic content"""
-    """Generate voice news using ElevenLabs with dynamic content"""
     try:
         voice_id = "VR6AewLTigWG4xSOukaG"  # Josh - rare, distinctive male voice
 
@@ -647,17 +639,8 @@ async def generate_voice_news(request: VoiceNewsRequest):
             # Generate script about tracked stocks
             script = await generate_watchlist_script(request.tracked_stocks)
 
-        # Generate dynamic script based on tracked stocks
-        if not request.tracked_stocks:
-            # General market script when no stocks are tracked
-            script = "Welcome to The Scoop, your financial news update. Today's market shows mixed signals as investors navigate economic uncertainty. Tech stocks are showing resilience while energy sectors face headwinds. The Federal Reserve's latest comments suggest cautious optimism. Stay tuned for more updates on your portfolio performance and market movements."
-        else:
-            # Generate script about tracked stocks
-            script = await generate_watchlist_script(request.tracked_stocks)
-
         # Generate audio with professional news anchor characteristics
         audio = elevenlabs.generate(
-            text=script,
             text=script,
             voice=voice_id,
             model="eleven_multilingual_v2",

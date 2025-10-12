@@ -4,6 +4,8 @@ import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { InteractiveGrid } from "@/components/InteractiveGrid";
 import WealthVisorChat from "@/components/WealthVisorChat";
+import VoiceNewsButton from "@/components/VoiceNewsButton";
+
 
 export default function Home() {
   const [trackedStocks, setTrackedStocks] = useState<string[]>([]);

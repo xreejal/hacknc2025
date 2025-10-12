@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import Dashboard from "./Dashboard";
@@ -8,6 +8,7 @@ import AddStockForm from "./AddStockForm";
 import NewsFeedForStocks from "./NewsFeedForStocks";
 import AgentChat from "./AgentChat";
 import VoiceNewsButton from "./VoiceNewsButton";
+import { Plus, MessageSquare, Volume2 } from "lucide-react";
 import Onboarding from "./Onboarding";
 import StockPillsContainer from "./StockPillsContainer";
 import { stockList } from "@/lib/stockList";
@@ -29,6 +30,9 @@ export default function DashboardLayout({
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [chatInitialMessage, setChatInitialMessage] = useState<string>("");
+  const [showLandingChoices, setShowLandingChoices] = useState(false);
+  const autoRevertTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const shouldAutoRevertRef = useRef<"none" | "chat" | "voice-news">("none");
 
   // Show onboarding for new users
   useEffect(() => {
@@ -36,7 +40,27 @@ export default function DashboardLayout({
     if (!hasSeenOnboarding) {
       setShowOnboarding(true);
     }
+
+    const hasSeenLandingChoices = localStorage.getItem("hasSeenLandingChoices");
+    if (!hasSeenLandingChoices) {
+      setShowLandingChoices(true);
+    }
   }, []);
+
+  // Auto-revert from landing-driven navigation
+  useEffect(() => {
+    if (shouldAutoRevertRef.current === "chat" && activeSection === "chat") {
+      if (autoRevertTimerRef.current) clearTimeout(autoRevertTimerRef.current);
+      autoRevertTimerRef.current = setTimeout(() => {
+        setActiveSection("add-stocks");
+        shouldAutoRevertRef.current = "none";
+      }, 10000); // revert after 10s
+    }
+
+    return () => {
+      if (autoRevertTimerRef.current) clearTimeout(autoRevertTimerRef.current);
+    };
+  }, [activeSection]);
 
   const handleToggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
@@ -49,6 +73,22 @@ export default function DashboardLayout({
 
   const handleAddStockClick = () => {
     setActiveSection("add-stocks");
+  };
+
+  const handleLandingSelect = (section: "add-stocks" | "voice-news" | "chat") => {
+    // Persist that user has interacted with landing choices
+    localStorage.setItem("hasSeenLandingChoices", "true");
+    setShowLandingChoices(false);
+
+    if (section === "chat") {
+      shouldAutoRevertRef.current = "chat";
+    } else if (section === "voice-news") {
+      shouldAutoRevertRef.current = "voice-news";
+    } else {
+      shouldAutoRevertRef.current = "none";
+    }
+
+    setActiveSection(section);
   };
 
   const handleViewStockDetails = (ticker: string) => {
@@ -82,6 +122,9 @@ export default function DashboardLayout({
             trackedStocks={trackedStocks}
             onRemoveStock={onRemoveStock}
             onAddStockClick={handleAddStockClick}
+            onGoToAddStocks={() => handleLandingSelect("add-stocks")}
+            onGoToVoiceNews={() => handleLandingSelect("voice-news")}
+            onGoToChat={() => handleLandingSelect("chat")}
           />
         );
       case "add-stocks":
@@ -141,7 +184,12 @@ export default function DashboardLayout({
               </p>
             </div>
             <div className="flex justify-center">
-              <VoiceNewsButton />
+              <VoiceNewsButton onDone={() => {
+                if (shouldAutoRevertRef.current === "voice-news") {
+                  setActiveSection("add-stocks");
+                  shouldAutoRevertRef.current = "none";
+                }
+              }} />
             </div>
           </div>
         );
@@ -163,7 +211,7 @@ export default function DashboardLayout({
         <Onboarding onComplete={handleCompleteOnboarding} />
       )}
 
-      <div className="flex h-screen bg-black text-white">
+      <div className="flex bg-black h-screen text-white">
         {/* Sidebar */}
         <Sidebar
           activeSection={activeSection}
@@ -173,7 +221,7 @@ export default function DashboardLayout({
         />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex flex-col flex-1 overflow-hidden">
           {/* Header */}
           <Header
             onToggleSidebar={handleToggleSidebar}
@@ -200,12 +248,12 @@ export default function DashboardLayout({
 
         {/* AI Chat Panel */}
         {showChat && (
-          <div className="fixed bottom-0 right-0 w-full md:w-96 h-96 md:h-[500px] bg-black/95 backdrop-blur-xl border-t md:border-l border-white/10 z-30">
-            <div className="flex items-center justify-between p-3 border-b border-white/10">
-              <h3 className="font-bold text-base text-white">AI Sentiment Analysis</h3>
+          <div className="right-0 bottom-0 z-30 fixed bg-black/95 backdrop-blur-xl border-white/10 border-t md:border-l w-full md:w-96 h-96 md:h-[500px]">
+            <div className="flex justify-between items-center p-3 border-white/10 border-b">
+              <h3 className="font-bold text-white text-base">AI Sentiment Analysis</h3>
               <button
                 onClick={handleCloseChat}
-                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+                className="hover:bg-white/10 p-1.5 rounded-lg text-gray-400 hover:text-white transition-colors"
               >
                 ✕
               </button>

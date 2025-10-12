@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Volume2, VolumeX } from 'lucide-react';
 
-const VoiceNewsButton = () => {
+interface VoiceNewsButtonProps {
+  onDone?: () => void;
+}
+
+const VoiceNewsButton = ({ onDone }: VoiceNewsButtonProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,12 +46,14 @@ const VoiceNewsButton = () => {
       audio.onended = () => {
         setIsPlaying(false);
         URL.revokeObjectURL(audioUrl);
+        onDone?.();
       };
       
       audio.onerror = () => {
         setIsPlaying(false);
         setIsLoading(false);
         URL.revokeObjectURL(audioUrl);
+        onDone?.();
       };
 
       await audio.play();
@@ -67,7 +73,7 @@ const VoiceNewsButton = () => {
       className="flex items-center gap-2 bg-black/40 backdrop-blur-sm border-white/10 hover:border-green-500/50 text-white hover:text-green-300 transition-all duration-200"
     >
       {isLoading ? (
-        <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+        <div className="border-2 border-green-500 border-t-transparent rounded-full w-4 h-4 animate-spin" />
       ) : isPlaying ? (
         <Volume2 className="w-4 h-4 text-green-500" />
       ) : (

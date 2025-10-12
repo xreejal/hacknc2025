@@ -7,15 +7,18 @@ import NewsSummaryPanel from "./NewsSummaryPanel";
 import { InteractiveGrid } from "./InteractiveGrid";
 import { fetchNews, getPastEvents, getUpcomingEvents } from "@/lib/api";
 import type { NewsArticle, EventAnalysis, UpcomingEvent } from "@/lib/api";
-import { Activity, TrendingUp, Sparkles } from "lucide-react";
+import { Activity, TrendingUp, Sparkles, Plus, MessageSquare, Volume2 } from "lucide-react";
 
 interface DashboardProps {
   trackedStocks: string[];
   onRemoveStock: (ticker: string) => void;
   onAddStockClick: () => void;
+  onGoToAddStocks?: () => void;
+  onGoToVoiceNews?: () => void;
+  onGoToChat?: () => void;
 }
 
-export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClick }: DashboardProps) {
+export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClick, onGoToAddStocks, onGoToVoiceNews, onGoToChat }: DashboardProps) {
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [pastEvents, setPastEvents] = useState<Record<string, EventAnalysis[]>>({});
   const [upcomingEvents, setUpcomingEvents] = useState<Record<string, UpcomingEvent[]>>({});
@@ -65,22 +68,38 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
 
   if (trackedStocks.length === 0) {
     return (
-        <div className="text-center py-12">
-        <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8">
-          <TrendingUp className="w-16 h-16 text-green mx-auto mb-4" />
-          <h2 className="font-black text-3xl text-white mb-3 tracking-tight">
-            START <span className="text-gradient-green">TRACKING</span>
+        <div className="py-12 text-center">
+        <div className="bg-black/40 backdrop-blur-sm p-8 border-white/10 rounded-lg">
+          <TrendingUp className="mx-auto mb-4 w-16 h-16 text-green" />
+          <h2 className="mb-3 font-black text-white text-3xl tracking-tight">
+            WELCOME TO <span className="text-gradient-green">STOCKLENS</span>
           </h2>
-          <p className="text-gray-400 mb-6 text-lg">
-            Add stocks to start tracking events and news
+          <p className="mb-6 text-gray-400 text-lg">
+            Choose how you want to start:
           </p>
-          <button
-            onClick={onAddStockClick}
-            className="flex items-center gap-2 bg-green hover:bg-green/80 px-6 py-3 rounded-full transition-colors mx-auto"
-          >
-            <TrendingUp className="w-5 h-5" />
-            <span className="font-mono font-bold text-lg">ADD YOUR FIRST STOCK</span>
-          </button>
+          <div className="flex sm:flex-row flex-col justify-center items-center gap-3">
+            <button
+              onClick={onGoToAddStocks ?? onAddStockClick}
+              className="flex items-center gap-2 bg-green hover:bg-green/80 px-6 py-3 rounded-full transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              <span className="font-mono font-bold text-base">ADD STOCK</span>
+            </button>
+            <button
+              onClick={onGoToVoiceNews}
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full transition-colors"
+            >
+              <Volume2 className="w-5 h-5" />
+              <span className="font-mono font-bold text-base">VOICE NEWS</span>
+            </button>
+            <button
+              onClick={onGoToChat}
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full transition-colors"
+            >
+              <MessageSquare className="w-5 h-5" />
+              <span className="font-mono font-bold text-base">CHAT BOT</span>
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -94,7 +113,7 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
             <button
               onClick={() => setShowSummaryPanel(true)}
               disabled={news.length === 0}
-              className="flex items-center gap-2 bg-green hover:bg-green/80 disabled:bg-gray-700 disabled:cursor-not-allowed px-4 py-2 rounded-full transition-colors"
+              className="flex items-center gap-2 bg-green hover:bg-green/80 disabled:bg-gray-700 px-4 py-2 rounded-full transition-colors disabled:cursor-not-allowed"
             >
               <Sparkles className="w-4 h-4" />
               <span className="font-mono font-bold text-base">
@@ -111,9 +130,9 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
         </div>
 
         {loading && (
-          <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6 mb-6">
+          <div className="bg-black/40 backdrop-blur-sm mb-6 p-6 border-white/10 rounded-lg">
             <div className="text-center">
-              <div className="animate-spin w-8 h-8 border-2 border-purple border-t-transparent rounded-full mx-auto mb-4"></div>
+              <div className="mx-auto mb-4 border-2 border-purple border-t-transparent rounded-full w-8 h-8 animate-spin"></div>
               <p className="text-gray-400">Loading data...</p>
             </div>
           </div>
@@ -124,7 +143,7 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
           <h2 className="mb-4 font-black text-3xl tracking-tight">
             TRACKED <span className="text-gradient-green">STOCKS</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {trackedStocks.map((ticker, index) => (
               <div 
                 key={ticker}
