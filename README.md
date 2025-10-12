@@ -1,4 +1,4 @@
-# StockLens
+# MoneyMoves
 
 A smart, personalized financial event tracker and news analyzer for hackathon projects.
 
@@ -55,7 +55,7 @@ Create `.env` files in both frontend and backend:
 
 **Backend (.env)**
 ```
-DATABASE_URL=postgresql://user:pass@localhost/stocklens
+DATABASE_URL=postgresql://user:pass@localhost/MoneyMoves
 NEWS_API_KEY=your_key
 ALPHA_VANTAGE_KEY=your_key
 ```
