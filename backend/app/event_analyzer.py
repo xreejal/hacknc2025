@@ -79,15 +79,15 @@ class EventAnalyzer:
             start_date = event_date - timedelta(days=estimation_window + event_window_before)
             end_date = event_date + timedelta(days=event_window_after + 5)
 
-            # Try to get stock data from Alpha Vantage first
-            stock_data = self._download_from_alpha_vantage(ticker)
+            # Use yfinance as primary source
+            stock_data = yf.download(ticker, start=start_date, end=end_date, progress=False)
             if stock_data.empty:
-                stock_data = yf.download(ticker, start=start_date, end=end_date, progress=False)
+                stock_data = self._download_from_alpha_vantage(ticker)
 
-            # Try to get benchmark data from Alpha Vantage first
-            market_data = self._download_from_alpha_vantage(self.benchmark)
+            # Use yfinance for benchmark data
+            market_data = yf.download(self.benchmark, start=start_date, end=end_date, progress=False)
             if market_data.empty:
-                market_data = yf.download(self.benchmark, start=start_date, end=end_date, progress=False)
+                market_data = self._download_from_alpha_vantage(self.benchmark)
 
             if stock_data.empty or market_data.empty:
                 raise ValueError("Insufficient data")
@@ -101,10 +101,31 @@ class EventAnalyzer:
             market_returns = market_data['Close'].pct_change().dropna()
 
             # Align data
+            if len(stock_returns) == 0 or len(market_returns) == 0:
+                raise ValueError("No returns data available")
+            
+            # Find common index
+            common_index = stock_returns.index.intersection(market_returns.index)
+            if len(common_index) == 0:
+                raise ValueError("No common dates between stock and market data")
+            
+            # Ensure we have valid data
+            stock_data_aligned = stock_returns.loc[common_index]
+            market_data_aligned = market_returns.loc[common_index]
+            
+            if len(stock_data_aligned) == 0 or len(market_data_aligned) == 0:
+                raise ValueError("No valid aligned data")
+            
+            # Ensure we have Series, not scalars
+            if not hasattr(stock_data_aligned, 'index'):
+                stock_data_aligned = pd.Series([stock_data_aligned], index=[common_index[0]])
+            if not hasattr(market_data_aligned, 'index'):
+                market_data_aligned = pd.Series([market_data_aligned], index=[common_index[0]])
+            
             aligned_data = pd.DataFrame({
-                'stock': stock_returns,
-                'market': market_returns
-            }).dropna()
+                'stock': stock_data_aligned,
+                'market': market_data_aligned
+            })
 
             # Split into estimation and event windows
             estimation_cutoff = event_date - timedelta(days=event_window_before)
@@ -191,15 +212,16 @@ class EventAnalyzer:
         try:
             print(f"Analyzing REAL price data for {ticker}...")
 
-            # Try Alpha Vantage first (more reliable)
-            stock_data = self._download_from_alpha_vantage(ticker)
-
-            # Fallback to yfinance if Alpha Vantage fails
+            # Use yfinance as primary source (more reliable for demo)
+            print(f"  Trying yfinance for {ticker}...")
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=365)
+            stock_data = yf.download(ticker, start=start_date, end=end_date, progress=False)
+            
+            # Try Alpha Vantage as fallback if yfinance fails
             if stock_data.empty:
-                print(f"  Trying yfinance for {ticker}...")
-                end_date = datetime.now()
-                start_date = end_date - timedelta(days=365)
-                stock_data = yf.download(ticker, start=start_date, end=end_date, progress=False)
+                print(f"  yfinance failed, trying Alpha Vantage for {ticker}...")
+                stock_data = self._download_from_alpha_vantage(ticker)
 
             if stock_data.empty:
                 print(f"  No real data available for {ticker}, using smart mock data")
@@ -215,10 +237,10 @@ class EventAnalyzer:
             # Analyze quarterly events (approximately every 90 days)
             # This simulates earnings dates which typically occur quarterly
             quarters = [
-                (45, "Q4 2024"),   # ~45 days ago
-                (135, "Q3 2024"),  # ~135 days ago (3 months)
-                (225, "Q2 2024"),  # ~225 days ago (6 months)
-                (315, "Q1 2024"),  # ~315 days ago (9 months)
+                (45, "Q4 2023"),   # ~45 days ago
+                (135, "Q3 2023"),  # ~135 days ago (3 months)
+                (225, "Q2 2023"),  # ~225 days ago (6 months)
+                (315, "Q1 2023"),  # ~315 days ago (9 months)
             ]
 
             events = []
@@ -334,9 +356,9 @@ class EventAnalyzer:
 
         events = []
         quarters = [
-            (45, "Q4 2024"),
-            (135, "Q3 2024"),
-            (225, "Q2 2024"),
+            (45, "Q4 2023"),
+            (135, "Q3 2023"),
+            (225, "Q2 2023"),
         ]
 
         for days_ago, quarter in quarters:
