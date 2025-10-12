@@ -2,13 +2,15 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 from dotenv import load_dotenv
 
 from app.news_service import NewsService
 from app.event_analyzer import EventAnalyzer
 from app.database import Database
+from app.agent import WealthVisorAgent
+from pathlib import Path
 
 load_dotenv()
 
@@ -30,6 +32,10 @@ news_service = NewsService(
 )
 event_analyzer = EventAnalyzer(alpha_vantage_key=os.getenv("ALPHA_VANTAGE_KEY"))
 db = Database(os.getenv("DATABASE_URL"))
+
+# Initialize chat agent
+prompt_path = Path(__file__).resolve().parent / "app" / "Agent-Prompt copy.md"
+agent = WealthVisorAgent(system_prompt_path=prompt_path, workspace_root=Path(__file__).resolve().parent.parent)
 
 # Pydantic models
 class AddTickerRequest(BaseModel):
@@ -85,9 +91,25 @@ class ChartData(BaseModel):
     period: str
     data: List[ChartDataPoint]
 
+class ChatRequest(BaseModel):
+    message: str
+    session_id: Optional[str] = None
+
+class ChatResponse(BaseModel):
+    session_id: str
+    reply: str
+
 @app.get("/")
 async def root():
     return {"message": "StockLens API is running"}
+
+@app.post("/agent/chat", response_model=ChatResponse)
+async def agent_chat(req: ChatRequest) -> ChatResponse:
+    try:
+        result = agent.chat(message=req.message, session_id=req.session_id)
+        return ChatResponse(session_id=result["session_id"], reply=result["reply"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/add_ticker")
 async def add_ticker(request: AddTickerRequest):
