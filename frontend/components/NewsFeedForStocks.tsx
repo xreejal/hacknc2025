@@ -8,9 +8,10 @@ import { Loader2, AlertCircle } from "lucide-react";
 
 interface NewsFeedForStocksProps {
   trackedStocks: string[];
+  onSentimentClick?: (article: NewsArticle) => void;
 }
 
-export default function NewsFeedForStocks({ trackedStocks }: NewsFeedForStocksProps) {
+export default function NewsFeedForStocks({ trackedStocks, onSentimentClick }: NewsFeedForStocksProps) {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -118,7 +119,7 @@ export default function NewsFeedForStocks({ trackedStocks }: NewsFeedForStocksPr
       </div>
 
       {/* News Feed */}
-      <NewsFeed articles={articles} />
+      <NewsFeed articles={articles} onSentimentClick={onSentimentClick} />
     </div>
   );
 }

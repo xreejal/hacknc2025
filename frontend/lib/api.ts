@@ -93,4 +93,9 @@ export const getChartData = async (ticker: string, period: string) => {
   return response.data;
 };
 
+export const explainSentiment = async (article: NewsArticle) => {
+  const response = await api.post<{ session_id: string; reply: string }>('/agent/explain-sentiment', { article });
+  return response.data;
+};
+
 export default api;

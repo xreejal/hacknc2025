@@ -6,9 +6,10 @@ import { ExternalLink, TrendingUp, TrendingDown } from "lucide-react";
 
 interface NewsFeedProps {
   articles: NewsArticle[];
+  onSentimentClick?: (article: NewsArticle) => void;
 }
 
-export default function NewsFeed({ articles }: NewsFeedProps) {
+export default function NewsFeed({ articles, onSentimentClick }: NewsFeedProps) {
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment.toLowerCase()) {
       case "positive":
@@ -51,13 +52,15 @@ export default function NewsFeed({ articles }: NewsFeedProps) {
                   <span className="text-sm font-bold text-green font-mono">
                     {article.ticker}
                   </span>
-                  <span
+                  <button
+                    onClick={() => onSentimentClick?.(article)}
                     className={`text-sm px-3 py-1 rounded border ${getSentimentColor(
                       article.sentiment
-                    )}`}
+                    )} hover:opacity-80 transition-opacity cursor-pointer font-semibold`}
+                    title="Click to see AI sentiment analysis"
                   >
                     {article.sentiment}
-                  </span>
+                  </button>
                   <span className="text-sm text-gray-500 font-mono">
                     {format(new Date(article.published_at), "MMM dd, yyyy")}
                   </span>
