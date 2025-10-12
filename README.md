@@ -1,4 +1,4 @@
-# StockLens
+# MoneyMoves
 
 A smart, personalized financial event tracker and news analyzer for hackathon projects.
 
