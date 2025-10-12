@@ -33,6 +33,12 @@ export default function DashboardLayout({
   const [showChat, setShowChat] = useState(false);
   const [chatInitialMessage, setChatInitialMessage] = useState<string>("");
 
+  // Effect to handle WealthVisor chat button visibility when switching sections
+  useEffect(() => {
+    // Hide the WealthVisor button when on the chat page
+    onChatVisibilityChange?.(activeSection === "chat");
+  }, [activeSection, onChatVisibilityChange]);
+
   // Show onboarding for new users
   useEffect(() => {
     const hasSeenOnboarding = localStorage.getItem("hasSeenOnboarding");
