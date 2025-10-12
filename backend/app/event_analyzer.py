@@ -165,16 +165,8 @@ class EventAnalyzer:
 
         except Exception as e:
             print(f"Error analyzing event for {ticker}: {e}")
-            # Return mock data for demo
-            return {
-                "ticker": ticker,
-                "event": "Event Analysis",
-                "date": event_date.isoformat(),
-                "car_0_1": 0.0,
-                "volatility_change": 1.0,
-                "sentiment": "neutral",
-                "conclusion": "Unable to analyze event due to insufficient data."
-            }
+            # Re-raise the exception so the calling function can fall back to mock data
+            raise e
 
     def get_past_earnings_events(self, ticker: str) -> List[Dict]:
         """
