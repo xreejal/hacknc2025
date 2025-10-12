@@ -38,14 +38,6 @@ export default function NewsFeed({ articles, onSentimentClick }: NewsFeedProps) 
           textShadow: '0 0 8px rgba(255, 255, 255, 0.15), 0 0 16px rgba(255, 255, 255, 0.08)'
         }}
       >
-        NEWS <span 
-          className="text-gradient-green"
-          style={{
-            textShadow: '0 0 8px rgba(16, 185, 129, 0.2), 0 0 16px rgba(16, 185, 129, 0.1)'
-          }}
-        >
-          FEED
-        </span>
       </h2>
       <div className="space-y-4">
         {articles.map((article, index) => (
