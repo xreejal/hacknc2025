@@ -4,6 +4,7 @@ import { useState } from "react";
 import Dashboard from "@/components/Dashboard";
 import AddStockForm from "@/components/AddStockForm";
 import { InteractiveGrid } from "@/components/InteractiveGrid";
+import WealthVisorChat from "@/components/WealthVisorChat";
 import { TrendingUp, Search } from "lucide-react";
 import { stockList } from "@/lib/stockList";
 import AgentChat from "@/components/AgentChat";
@@ -76,6 +77,9 @@ export default function Home() {
           <AgentChat />
         </div>
       </main>
+
+      {/* WealthVisor AI Chatbot */}
+      <WealthVisorChat />
     </div>
   );
 }

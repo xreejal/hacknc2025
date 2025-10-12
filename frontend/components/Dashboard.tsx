@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import StockCard from "./StockCard";
 import NewsFeed from "./NewsFeed";
+import NewsSummaryPanel from "./NewsSummaryPanel";
 import { InteractiveGrid } from "./InteractiveGrid";
 import { fetchNews, getPastEvents, getUpcomingEvents } from "@/lib/api";
 import type { NewsArticle, EventAnalysis, UpcomingEvent } from "@/lib/api";
-import { Activity, TrendingUp } from "lucide-react";
+import { Activity, TrendingUp, Sparkles } from "lucide-react";
 
 interface DashboardProps {
   trackedStocks: string[];
@@ -18,6 +19,7 @@ export default function Dashboard({ trackedStocks, onRemoveStock }: DashboardPro
   const [pastEvents, setPastEvents] = useState<Record<string, EventAnalysis[]>>({});
   const [upcomingEvents, setUpcomingEvents] = useState<Record<string, UpcomingEvent[]>>({});
   const [loading, setLoading] = useState(false);
+  const [showSummaryPanel, setShowSummaryPanel] = useState(false);
 
   useEffect(() => {
     if (trackedStocks.length > 0) {
@@ -84,11 +86,23 @@ export default function Dashboard({ trackedStocks, onRemoveStock }: DashboardPro
             <h1 className="font-black text-4xl tracking-tight">
               TRADING <span className="text-gradient-purple">DASHBOARD</span>
             </h1>
-            <div className="flex items-center gap-2 bg-purple/10 px-4 py-2 border border-purple/30 rounded-full">
-              <Activity className="w-4 h-4 text-purple animate-pulse" />
-              <span className="font-mono font-bold text-purple text-sm">
-                {loading ? "LOADING" : "LIVE"}
-              </span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowSummaryPanel(true)}
+                disabled={news.length === 0}
+                className="flex items-center gap-2 bg-purple hover:bg-purple/80 disabled:bg-gray-700 disabled:cursor-not-allowed px-4 py-2 rounded-full transition-colors"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span className="font-mono font-bold text-sm">
+                  AI SUMMARY
+                </span>
+              </button>
+              <div className="flex items-center gap-2 bg-purple/10 px-4 py-2 border border-purple/30 rounded-full">
+                <Activity className="w-4 h-4 text-purple animate-pulse" />
+                <span className="font-mono font-bold text-purple text-sm">
+                  {loading ? "LOADING" : "LIVE"}
+                </span>
+              </div>
             </div>
           </div>
           <p className="text-gray-400">
@@ -134,8 +148,15 @@ export default function Dashboard({ trackedStocks, onRemoveStock }: DashboardPro
           </div>
         </div>
 
-          {/* News Feed */}
-          <NewsFeed articles={news} />
-        </div>
+        {/* News Feed */}
+        <NewsFeed articles={news} />
+
+        {/* AI Summary Panel */}
+        <NewsSummaryPanel
+          articles={news}
+          isOpen={showSummaryPanel}
+          onClose={() => setShowSummaryPanel(false)}
+        />
+      </div>
     );
   }
