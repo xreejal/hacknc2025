@@ -30,9 +30,9 @@ export function InteractiveGrid() {
     if (!ctx) return
 
     let dots: Dot[] = []
-    const gridSize = 50
+    const gridSize = 40
     const maxDistance = 250
-    const connectionDistance = gridSize * 1.8
+    const connectionDistance = gridSize * 1.3
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
@@ -153,10 +153,10 @@ export function InteractiveGrid() {
               const opacity = Math.pow(1 - dist / connectionDistance, 2)
               const gradient = ctx.createLinearGradient(dot.x, dot.y, otherDot.x, otherDot.y)
 
-              // Enhanced gradient with purple tones
-              gradient.addColorStop(0, `rgba(139, 92, 246, ${opacity * 0.3})`)
-              gradient.addColorStop(0.5, `rgba(168, 85, 247, ${opacity * 0.25})`)
-              gradient.addColorStop(1, `rgba(139, 92, 246, ${opacity * 0.3})`)
+              // Enhanced gradient with green tones
+              gradient.addColorStop(0, `rgba(16, 185, 129, ${opacity * 0.3})`)
+              gradient.addColorStop(0.5, `rgba(52, 211, 153, ${opacity * 0.25})`)
+              gradient.addColorStop(1, `rgba(16, 185, 129, ${opacity * 0.3})`)
 
               ctx.strokeStyle = gradient
               ctx.beginPath()
@@ -183,17 +183,17 @@ export function InteractiveGrid() {
         const dotSize = baseSize + proximityFactor * (maxSize - baseSize)
 
         // Enhanced opacity
-        const baseOpacity = 0.3
-        const maxOpacity = 0.9
+        const baseOpacity = 0.2
+        const maxOpacity = 0.3
         const dotOpacity = baseOpacity + proximityFactor * (maxOpacity - baseOpacity)
 
         // Draw glow effect for dots near mouse
         if (isNearMouse && proximityFactor > 0.3) {
-          const glowSize = dotSize + 8 * proximityFactor
+          const glowSize = dotSize + 5 * proximityFactor
           const gradient = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, glowSize)
-          gradient.addColorStop(0, `rgba(168, 85, 247, ${dotOpacity * 0.4})`)
-          gradient.addColorStop(0.5, `rgba(139, 92, 246, ${dotOpacity * 0.2})`)
-          gradient.addColorStop(1, 'rgba(139, 92, 246, 0)')
+          gradient.addColorStop(0, `rgba(52, 211, 153, ${dotOpacity * 0.1})`)
+          gradient.addColorStop(0.5, `rgba(16, 185, 129, ${dotOpacity * 0.1})`)
+          gradient.addColorStop(1, 'rgba(16, 185, 129, 0)')
 
           ctx.fillStyle = gradient
           ctx.beginPath()
@@ -202,14 +202,14 @@ export function InteractiveGrid() {
         }
 
         // Draw main dot
-        ctx.fillStyle = `rgba(168, 85, 247, ${dotOpacity})`
+        ctx.fillStyle = `rgba(52, 211, 153, ${dotOpacity})`
         ctx.beginPath()
         ctx.arc(dot.x, dot.y, dotSize, 0, Math.PI * 2)
         ctx.fill()
 
         // Add inner highlight for larger dots
         if (dotSize > 3) {
-          ctx.fillStyle = `rgba(216, 180, 254, ${dotOpacity * 0.6})`
+          ctx.fillStyle = `rgba(110, 231, 183, ${dotOpacity * 0.6})`
           ctx.beginPath()
           ctx.arc(dot.x, dot.y, dotSize * 0.4, 0, Math.PI * 2)
           ctx.fill()

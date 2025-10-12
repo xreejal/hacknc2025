@@ -48,7 +48,7 @@ export default function NewsFeedForStocks({ trackedStocks }: NewsFeedForStocksPr
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="bg-purple hover:bg-purple/80 px-4 py-2 rounded-lg transition-colors"
+          className="bg-green hover:bg-green/80 px-4 py-2 rounded-lg transition-colors"
         >
           Add Stocks
         </button>
@@ -59,9 +59,9 @@ export default function NewsFeedForStocks({ trackedStocks }: NewsFeedForStocksPr
   if (loading) {
     return (
       <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8 text-center">
-        <Loader2 className="w-8 h-8 animate-spin text-purple mx-auto mb-4" />
+        <Loader2 className="w-8 h-8 animate-spin text-green mx-auto mb-4" />
         <p className="text-gray-400 mb-2">Loading news for {trackedStocks.length} tracked stocks...</p>
-        <p className="text-sm text-purple/70">Filtering for relevance using AI analysis</p>
+        <p className="text-sm text-green/70">Filtering for relevance using AI analysis</p>
       </div>
     );
   }
@@ -74,7 +74,7 @@ export default function NewsFeedForStocks({ trackedStocks }: NewsFeedForStocksPr
         <p className="text-gray-400 mb-4">{error}</p>
         <button
           onClick={loadNews}
-          className="bg-purple hover:bg-purple/80 px-4 py-2 rounded-lg transition-colors"
+          className="bg-green hover:bg-green/80 px-4 py-2 rounded-lg transition-colors"
         >
           Try Again
         </button>
@@ -97,20 +97,20 @@ export default function NewsFeedForStocks({ trackedStocks }: NewsFeedForStocksPr
   return (
     <div className="space-y-4">
       {/* News Summary */}
-      <div className="bg-purple/10 border border-purple/30 rounded-lg p-4">
+      <div className="bg-green/10 border border-green/30 rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-white mb-1">Filtered News Summary</h3>
             <p className="text-sm text-gray-400">
               {articles.length} relevant articles found for {trackedStocks.join(", ")}
             </p>
-            <p className="text-xs text-purple/70 mt-1">
+            <p className="text-xs text-green/70 mt-1">
               ✓ Filtered for stock relevance using AI analysis
             </p>
           </div>
           <button
             onClick={loadNews}
-            className="text-purple hover:text-purple/80 text-sm font-medium"
+            className="text-green hover:text-green/80 text-sm font-medium"
           >
             Refresh
           </button>

@@ -69,7 +69,7 @@ export default function DashboardLayout({
           <div className="space-y-6">
             <div className="mb-8">
               <h1 className="mb-3 font-black text-5xl tracking-tight">
-                ADD <span className="text-gradient-purple">STOCKS</span>
+                ADD <span className="text-gradient-green">STOCKS</span>
               </h1>
               <p className="text-gray-400 text-lg">
                 Search and add stocks to your tracking portfolio
@@ -83,7 +83,7 @@ export default function DashboardLayout({
           <div className="space-y-6">
             <div className="mb-8">
               <h1 className="mb-3 font-black text-5xl tracking-tight">
-                NEWS <span className="text-gradient-purple">FEED</span>
+                NEWS <span className="text-gradient-green">FEED</span>
               </h1>
               <p className="text-gray-400 text-lg">
                 Latest market news and analysis for your tracked stocks
@@ -97,7 +97,7 @@ export default function DashboardLayout({
           <div className="space-y-6">
             <div className="mb-8">
               <h1 className="mb-3 font-black text-5xl tracking-tight">
-                AI <span className="text-gradient-purple">CHAT</span>
+                AI <span className="text-gradient-green">CHAT</span>
               </h1>
               <p className="text-gray-400 text-lg">
                 Chat with WealthVisor AI for market insights
@@ -111,7 +111,7 @@ export default function DashboardLayout({
           <div className="space-y-6">
             <div className="mb-8">
               <h1 className="mb-3 font-black text-5xl tracking-tight">
-                VOICE <span className="text-gradient-purple">NEWS</span>
+                VOICE <span className="text-gradient-green">NEWS</span>
               </h1>
               <p className="text-gray-400 text-lg">
                 Listen to AI-generated market commentary

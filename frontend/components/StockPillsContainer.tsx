@@ -25,7 +25,7 @@ export default function StockPillsContainer({
         <div className="text-gray-400 text-base">No stocks tracked</div>
         <button
           onClick={onAddStock}
-          className="flex items-center gap-2 bg-purple/20 hover:bg-purple/30 border border-purple/30 px-4 py-2 rounded-full transition-colors"
+          className="flex items-center gap-2 bg-green/20 hover:bg-green/30 border border-green/30 px-4 py-2 rounded-full transition-colors"
         >
           <Plus className="w-5 h-5" />
           <span className="text-base font-medium">Add Stock</span>
@@ -45,7 +45,10 @@ export default function StockPillsContainer({
           <StockPill
             key={ticker}
             ticker={ticker}
-            onRemove={() => onRemoveStock(ticker)}
+            onRemove={() => {
+              console.log('StockPillsContainer: Removing ticker:', ticker);
+              onRemoveStock(ticker);
+            }}
             onViewDetails={() => onViewStockDetails?.(ticker)}
           />
         ))}
@@ -66,7 +69,7 @@ export default function StockPillsContainer({
         {/* Add Stock Button */}
         <button
           onClick={onAddStock}
-          className="flex items-center gap-2 bg-purple/20 hover:bg-purple/30 border border-purple/30 px-4 py-2 rounded-full transition-colors"
+          className="flex items-center gap-2 bg-green/20 hover:bg-green/30 border border-green/30 px-4 py-2 rounded-full transition-colors"
         >
           <Plus className="w-5 h-5" />
           <span className="text-base font-medium">Add</span>

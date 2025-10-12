@@ -64,12 +64,12 @@ const VoiceNewsButton = () => {
       onClick={handleVoiceNews}
       disabled={isLoading || isPlaying}
       variant="outline"
-      className="flex items-center gap-2 bg-black/40 backdrop-blur-sm border-white/10 hover:border-purple-500/50 text-white hover:text-purple-300 transition-all duration-200"
+      className="flex items-center gap-2 bg-black/40 backdrop-blur-sm border-white/10 hover:border-green-500/50 text-white hover:text-green-300 transition-all duration-200"
     >
       {isLoading ? (
-        <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
       ) : isPlaying ? (
-        <Volume2 className="w-4 h-4 text-purple-500" />
+        <Volume2 className="w-4 h-4 text-green-500" />
       ) : (
         <VolumeX className="w-4 h-4" />
       )}
