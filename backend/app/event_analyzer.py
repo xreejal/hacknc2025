@@ -260,34 +260,68 @@ class EventAnalyzer:
 
     def get_upcoming_events(self, ticker: str) -> List[Dict]:
         """
-        Get upcoming events for a ticker
+        Get upcoming events for a ticker using Alpha Vantage earnings calendar
         """
+        # Check cache first
+        cache_key = f"upcoming_events_{ticker}"
+        if cache_key in self.cache:
+            data, timestamp = self.cache[cache_key]
+            if datetime.now() - timestamp < timedelta(hours=24):
+                print(f"[CACHE] Using cached upcoming events for {ticker}")
+                return data
+
         try:
-            stock = yf.Ticker(ticker)
+            print(f"Fetching real upcoming earnings for {ticker}...")
 
-            # Get upcoming earnings date
-            earnings_dates = stock.earnings_dates
-            upcoming_events = []
+            # Try Alpha Vantage Earnings Calendar API
+            if self.alpha_vantage_key and self.alpha_vantage_key != "your_alphavantage_key_here":
+                url = "https://www.alphavantage.co/query"
+                params = {
+                    "function": "EARNINGS_CALENDAR",
+                    "symbol": ticker,
+                    "apikey": self.alpha_vantage_key
+                }
 
-            if earnings_dates is not None:
-                future_dates = earnings_dates[earnings_dates.index > datetime.now()]
-                for date in future_dates.index[:3]:
-                    upcoming_events.append({
-                        "ticker": ticker,
-                        "type": "Earnings Report",
-                        "date": date.isoformat(),
-                        "expected_impact": "High"
-                    })
+                response = requests.get(url, params=params, timeout=10)
 
-            # If no real data, return mock upcoming events
-            if not upcoming_events:
-                upcoming_events = self._generate_mock_upcoming_events(ticker)
+                if response.status_code == 200:
+                    # Parse CSV response
+                    from io import StringIO
+                    import csv
 
-            return upcoming_events
+                    csv_data = StringIO(response.text)
+                    reader = csv.DictReader(csv_data)
+
+                    upcoming_events = []
+                    for row in reader:
+                        report_date = row.get('reportDate')
+                        if report_date:
+                            event_date = datetime.strptime(report_date, '%Y-%m-%d')
+                            # Only include future dates
+                            if event_date > datetime.now():
+                                upcoming_events.append({
+                                    "ticker": ticker,
+                                    "type": "Earnings Report",
+                                    "date": event_date.isoformat(),
+                                    "expected_impact": "High"
+                                })
+
+                    if upcoming_events:
+                        print(f"  SUCCESS! Found {len(upcoming_events)} real upcoming earnings")
+                        self.cache[cache_key] = (upcoming_events[:3], datetime.now())
+                        return upcoming_events[:3]
+
+            # Fallback to mock data
+            print(f"  Using estimated earnings dates for {ticker}")
+            result = self._generate_mock_upcoming_events(ticker)
+            self.cache[cache_key] = (result, datetime.now())
+            return result
 
         except Exception as e:
             print(f"Error fetching upcoming events for {ticker}: {e}")
-            return self._generate_mock_upcoming_events(ticker)
+            result = self._generate_mock_upcoming_events(ticker)
+            self.cache[cache_key] = (result, datetime.now())
+            return result
 
     def _generate_mock_events(self, ticker: str) -> List[Dict]:
         """Generate realistic mock events with ticker-specific values"""
