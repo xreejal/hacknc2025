@@ -15,7 +15,11 @@ export default function Home() {
   };
 
   const handleRemoveStock = (ticker: string) => {
-    setTrackedStocks(trackedStocks.filter(t => t !== ticker));
+    console.log('Page: handleRemoveStock called with ticker:', ticker);
+    console.log('Page: Current trackedStocks before removal:', trackedStocks);
+    const newStocks = trackedStocks.filter(t => t !== ticker);
+    console.log('Page: New trackedStocks after removal:', newStocks);
+    setTrackedStocks(newStocks);
   };
 
   return (

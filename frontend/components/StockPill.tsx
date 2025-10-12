@@ -74,61 +74,66 @@ export default function StockPill({ ticker, onRemove, onViewDetails }: StockPill
   const isNegative = stockData?.change && stockData.change < 0;
 
   return (
-    <div 
-      className="group relative bg-black/40 backdrop-blur-sm border border-white/10 rounded-full px-4 py-2 hover:border-purple/50 transition-all duration-200 cursor-pointer"
-      onClick={onViewDetails}
-    >
-      <div className="flex items-center gap-3">
-        {/* Ticker */}
-        <div className="font-mono font-bold text-lg text-white">
-          {ticker}
+    <div className="group relative flex items-center gap-2">
+      <div 
+        className="flex-1 bg-black/40 backdrop-blur-sm border border-white/10 rounded-full px-4 py-2 hover:border-green/50 transition-all duration-200 cursor-pointer"
+        onClick={onViewDetails}
+      >
+        <div className="flex items-center gap-3">
+          {/* Ticker */}
+          <div className="font-mono font-bold text-lg text-white">
+            {ticker}
+          </div>
+
+          {/* Price Data */}
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+          ) : error ? (
+            <span className="text-red-400 text-xs">Error</span>
+          ) : stockData ? (
+            <div className="flex items-center gap-2">
+              {/* Price */}
+              <span className="font-semibold text-base text-white flex items-center gap-1">
+                {formatPrice(stockData.price)}
+                {updating && <Loader2 className="w-3 h-3 animate-spin text-green" />}
+              </span>
+
+              {/* Change */}
+              <div className={`flex items-center gap-1 text-sm ${
+                isPositive ? 'text-green-400' : 
+                isNegative ? 'text-red-400' : 
+                'text-gray-400'
+              }`}>
+                {isPositive ? (
+                  <TrendingUp className="w-3 h-3" />
+                ) : isNegative ? (
+                  <TrendingDown className="w-3 h-3" />
+                ) : null}
+                <span>
+                  {formatChange(stockData.change)} ({formatChangePercent(stockData.changePercent)})
+                </span>
+              </div>
+            </div>
+          ) : null}
         </div>
 
-        {/* Price Data */}
-        {loading ? (
-          <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-        ) : error ? (
-          <span className="text-red-400 text-xs">Error</span>
-        ) : stockData ? (
-          <div className="flex items-center gap-2">
-            {/* Price */}
-            <span className="font-semibold text-base text-white flex items-center gap-1">
-              {formatPrice(stockData.price)}
-              {updating && <Loader2 className="w-3 h-3 animate-spin text-purple" />}
-            </span>
-
-            {/* Change */}
-            <div className={`flex items-center gap-1 text-sm ${
-              isPositive ? 'text-green-400' : 
-              isNegative ? 'text-red-400' : 
-              'text-gray-400'
-            }`}>
-              {isPositive ? (
-                <TrendingUp className="w-3 h-3" />
-              ) : isNegative ? (
-                <TrendingDown className="w-3 h-3" />
-              ) : null}
-              <span>
-                {formatChange(stockData.change)} ({formatChangePercent(stockData.changePercent)})
-              </span>
-            </div>
-          </div>
-        ) : null}
-
-        {/* Remove Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-500/20 rounded-full"
-        >
-          <X className="w-3 h-3 text-red-400" />
-        </button>
+        {/* Hover Effect */}
+        <div className="absolute inset-0 bg-green/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
 
-      {/* Hover Effect */}
-      <div className="absolute inset-0 bg-purple/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* Remove Button - Separate from pill */}
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('X button clicked for ticker:', ticker);
+          onRemove();
+        }}
+        className="opacity-70 hover:opacity-100 transition-all duration-200 p-2 hover:bg-red-500/20 rounded-full hover:scale-110 z-10"
+        title="Remove stock"
+      >
+        <X className="w-4 h-4 text-red-400 hover:text-red-300" />
+      </button>
     </div>
   );
 }

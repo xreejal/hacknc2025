@@ -67,16 +67,16 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
     return (
         <div className="text-center py-12">
         <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8">
-          <TrendingUp className="w-16 h-16 text-purple mx-auto mb-4" />
+          <TrendingUp className="w-16 h-16 text-green mx-auto mb-4" />
           <h2 className="font-black text-3xl text-white mb-3 tracking-tight">
-            START <span className="text-gradient-purple">TRACKING</span>
+            START <span className="text-gradient-green">TRACKING</span>
           </h2>
           <p className="text-gray-400 mb-6 text-lg">
             Add stocks to start tracking events and news
           </p>
           <button
             onClick={onAddStockClick}
-            className="flex items-center gap-2 bg-purple hover:bg-purple/80 px-6 py-3 rounded-full transition-colors mx-auto"
+            className="flex items-center gap-2 bg-green hover:bg-green/80 px-6 py-3 rounded-full transition-colors mx-auto"
           >
             <TrendingUp className="w-5 h-5" />
             <span className="font-mono font-bold text-lg">ADD YOUR FIRST STOCK</span>
@@ -94,16 +94,16 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
             <button
               onClick={() => setShowSummaryPanel(true)}
               disabled={news.length === 0}
-              className="flex items-center gap-2 bg-purple hover:bg-purple/80 disabled:bg-gray-700 disabled:cursor-not-allowed px-4 py-2 rounded-full transition-colors"
+              className="flex items-center gap-2 bg-green hover:bg-green/80 disabled:bg-gray-700 disabled:cursor-not-allowed px-4 py-2 rounded-full transition-colors"
             >
               <Sparkles className="w-4 h-4" />
               <span className="font-mono font-bold text-base">
                 AI SUMMARY
               </span>
             </button>
-            <div className="flex items-center gap-2 bg-purple/10 px-4 py-2 border border-purple/30 rounded-full">
-              <Activity className="w-4 h-4 text-purple animate-pulse" />
-              <span className="font-mono font-bold text-purple text-base">
+            <div className="flex items-center gap-2 bg-green/10 px-4 py-2 border border-green/30 rounded-full">
+              <Activity className="w-4 h-4 text-green animate-pulse" />
+              <span className="font-mono font-bold text-green text-base">
                 {loading ? "LOADING" : "LIVE"}
               </span>
             </div>
@@ -122,7 +122,7 @@ export default function Dashboard({ trackedStocks, onRemoveStock, onAddStockClic
         {/* Tracked Stocks */}
         <div className="mb-6">
           <h2 className="mb-4 font-black text-3xl tracking-tight">
-            TRACKED <span className="text-gradient-purple">STOCKS</span>
+            TRACKED <span className="text-gradient-green">STOCKS</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {trackedStocks.map((ticker, index) => (

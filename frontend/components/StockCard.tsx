@@ -85,7 +85,7 @@ export default function StockCard({
         </div>
 
         {/* Events List */}
-        <div className="space-y-3 max-h-64 overflow-y-auto">
+        <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-hide">
           {showPast ? (
             pastEvents.length > 0 ? (
               pastEvents.slice(0, 5).map((event, index) => (

@@ -23,6 +23,7 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
             >
               <Search className="w-5 h-5" />
             </button>
+            
           </div>
 
           {/* Center Section - Quick Actions */}

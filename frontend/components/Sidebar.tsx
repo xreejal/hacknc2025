@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  TrendingUp, 
-  Plus, 
-  BarChart3, 
-  Newspaper, 
-  MessageSquare, 
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  TrendingUp,
+  Plus,
+  BarChart3,
+  Newspaper,
+  MessageSquare,
   Volume2,
   Settings,
   Menu,
@@ -62,32 +63,56 @@ export default function Sidebar({
   return (
     <>
       {/* Mobile Overlay */}
-      {!isCollapsed && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-          onClick={onToggleCollapse}
-        />
-      )}
+      <AnimatePresence>
+        {!isCollapsed && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+            onClick={onToggleCollapse}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
-      <aside className={`
-        fixed top-0 left-0 h-full bg-black/90 backdrop-blur-xl border-r border-white/10 z-50
-        transition-all duration-300 ease-in-out
-        ${isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16' : 'translate-x-0 w-72'}
-        lg:relative lg:translate-x-0
-      `}>
+      <motion.aside
+        initial={false}
+        animate={{
+          width: isCollapsed ? 64 : 288, // 16rem = 64px, 72rem = 288px
+        }}
+        transition={{
+          duration: 0.3,
+          ease: [0.4, 0, 0.2, 1]
+        }}
+        className={`
+          fixed top-0 left-0 h-full bg-black/90 backdrop-blur-xl border-r border-white/10 z-50
+          lg:relative
+          transition-transform duration-300 ease-in-out
+          ${isCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
+        `}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
-          {!isCollapsed && (
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <TrendingUp className="w-7 h-7 text-purple" />
-                <div className="absolute inset-0 bg-purple/50 blur-lg" />
-              </div>
-              <span className="font-black text-2xl tracking-tight">STOCKLENS</span>
-            </div>
-          )}
-          
+          <AnimatePresence>
+            {!isCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-3"
+              >
+                <div className="relative">
+                  <TrendingUp className="w-7 h-7 text-green" />
+                  <div className="absolute inset-0 bg-green/50 blur-lg" />
+                </div>
+                <span className="font-black text-2xl tracking-tight text-green">STOCKLENS</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <button
             onClick={onToggleCollapse}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -101,42 +126,60 @@ export default function Sidebar({
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
-            
+
             return (
-              <button
+              <motion.button
                 key={item.id}
                 onClick={() => onSectionChange(item.id)}
+                layout
+                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 className={`
-                  w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
-                  ${isActive 
-                    ? 'bg-purple/20 border border-purple/30 text-purple' 
+                  w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200
+                  ${isActive
+                    ? 'bg-green/20 border border-green/30 text-green'
                     : 'hover:bg-white/10 text-gray-300 hover:text-white'
                   }
                   ${isCollapsed ? 'justify-center' : 'justify-start'}
                 `}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-purple' : ''}`} />
-                {!isCollapsed && (
-                  <div className="flex-1 text-left">
-                    <div className="font-semibold text-base">{item.label}</div>
-                    <div className="text-sm text-gray-400">{item.description}</div>
-                  </div>
-                )}
-              </button>
+                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-green' : ''}`} />
+                <AnimatePresence>
+                  {!isCollapsed && (
+                    <motion.div
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: 'auto' }}
+                      exit={{ opacity: 0, width: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex-1 text-left overflow-hidden"
+                    >
+                      <div className="font-semibold text-base whitespace-nowrap">{item.label}</div>
+                      <div className="text-sm text-gray-400 whitespace-nowrap">{item.description}</div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
             );
           })}
         </nav>
 
         {/* Footer */}
-        {!isCollapsed && (
-          <div className="absolute bottom-4 left-4 right-4">
-            <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white transition-colors">
-              <Settings className="w-5 h-5" />
-              <span className="font-semibold text-base">Settings</span>
-            </button>
-          </div>
-        )}
-      </aside>
+        <AnimatePresence>
+          {!isCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-4 left-4 right-4"
+            >
+              <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white transition-colors">
+                <Settings className="w-5 h-5 flex-shrink-0" />
+                <span className="font-semibold text-base">Settings</span>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.aside>
     </>
   );
 }

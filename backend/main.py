@@ -16,6 +16,10 @@ from elevenlabs import ElevenLabs
 
 load_dotenv()
 
+# Debug: Print env vars to verify they're loaded
+print(f"DEBUG: GEMINI_API_KEY exists: {os.getenv('GEMINI_API_KEY') is not None}")
+print(f"DEBUG: GOOGLE_API_KEY exists: {os.getenv('GOOGLE_API_KEY') is not None}")
+
 app = FastAPI(title="StockLens API", version="1.0.0")
 
 # CORS middleware
@@ -39,6 +43,11 @@ db = Database(os.getenv("DATABASE_URL"))
 elevenlabs = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
 
 # Initialize chat agent
+# Ensure Gemini API key is available
+gemini_api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+if gemini_api_key and not os.getenv("GOOGLE_API_KEY"):
+    os.environ["GOOGLE_API_KEY"] = gemini_api_key
+
 prompt_path = Path(__file__).resolve().parent / "app" / "Agent-Prompt copy.md"
 agent = WealthVisorAgent(system_prompt_path=prompt_path, workspace_root=Path(__file__).resolve().parent.parent)
 
@@ -104,6 +113,9 @@ class ChatResponse(BaseModel):
     session_id: str
     reply: str
 
+class SentimentExplanationRequest(BaseModel):
+    article: NewsArticle
+
 class VoiceNewsRequest(BaseModel):
     text: str
 
@@ -115,6 +127,32 @@ async def root():
 async def agent_chat(req: ChatRequest) -> ChatResponse:
     try:
         result = agent.chat(message=req.message, session_id=req.session_id)
+        return ChatResponse(session_id=result["session_id"], reply=result["reply"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/agent/explain-sentiment", response_model=ChatResponse)
+async def explain_sentiment(req: SentimentExplanationRequest) -> ChatResponse:
+    try:
+        article = req.article
+        prompt = f"""Analyze this financial news article and explain why it has been classified as '{article.sentiment}' sentiment.
+
+Article Details:
+- Title: {article.title}
+- Summary: {article.summary}
+- Ticker: {article.ticker}
+- Sentiment: {article.sentiment}
+- Published: {article.published_at}
+
+Please provide a detailed explanation covering:
+1. Key phrases or words that influenced the sentiment classification
+2. The overall tone and context of the article
+3. Why this sentiment rating (positive/negative/neutral) makes sense for {article.ticker}
+4. What this means for potential investors
+
+Keep your response concise, professional, and focused on sentiment analysis."""
+
+        result = agent.chat(message=prompt, session_id=None)
         return ChatResponse(session_id=result["session_id"], reply=result["reply"])
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

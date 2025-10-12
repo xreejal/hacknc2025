@@ -18,14 +18,22 @@ type ChatMessage = {
 interface AgentChatProps {
   placeholder?: string;
   className?: string;
+  initialMessage?: string;
+  autoSend?: boolean;
 }
 
-export default function AgentChat({ placeholder = "Ask WealthVisor...", className }: AgentChatProps) {
+export default function AgentChat({
+  placeholder = "Ask WealthVisor...",
+  className,
+  initialMessage,
+  autoSend = false
+}: AgentChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const sessionIdRef = useRef<string | null>(null);
+  const hasAutoSent = useRef(false);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -33,15 +41,21 @@ export default function AgentChat({ placeholder = "Ask WealthVisor...", classNam
     }
   }, [messages]);
 
-  const sendMessage = async () => {
-    const trimmed = input.trim();
+  // Auto-send initial message
+  useEffect(() => {
+    if (initialMessage && autoSend && !hasAutoSent.current && !isSending) {
+      hasAutoSent.current = true;
+      sendMessageWithContent(initialMessage);
+    }
+  }, [initialMessage, autoSend]);
+
+  const sendMessageWithContent = async (content: string) => {
+    const trimmed = content.trim();
     if (!trimmed || isSending) return;
     const userMessage: ChatMessage = { id: crypto.randomUUID(), role: "user", content: trimmed };
     setMessages((prev) => [...prev, userMessage]);
-    setInput("");
     setIsSending(true);
     try {
-      // Backend chat endpoint not defined in codebase; using a conventional route
       const response = await api.post<{ session_id: string; reply: string }>("/agent/chat", {
         message: trimmed,
         session_id: sessionIdRef.current,
@@ -53,16 +67,23 @@ export default function AgentChat({ placeholder = "Ask WealthVisor...", classNam
         content: response.data.reply,
       };
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (e) {
+    } catch (e: any) {
+      console.error("Agent chat error:", e);
+      const errorMessage = e?.response?.data?.detail || e?.message || "Unknown error occurred";
       const assistantMessage: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: "Sorry, I couldn't reach the agent service.",
+        content: `Sorry, I couldn't reach the agent service. Error: ${errorMessage}`,
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } finally {
       setIsSending(false);
     }
+  };
+
+  const sendMessage = async () => {
+    setInput("");
+    await sendMessageWithContent(input);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {

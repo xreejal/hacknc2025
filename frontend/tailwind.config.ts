@@ -50,10 +50,10 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        purple: {
-          DEFAULT: "#8B5CF6",
-          dark: "#7C3AED",
-          light: "#A78BFA",
+        green: {
+          DEFAULT: "#10B981",
+          dark: "#059669",
+          light: "#34D399",
         },
         chartGreen: {
           DEFAULT: "#10B981",
