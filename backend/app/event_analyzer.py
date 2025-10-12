@@ -14,6 +14,11 @@ class EventAnalyzer:
         self.cache = {}  # Simple in-memory cache
         self.cache_duration = timedelta(minutes=15)  # Cache for 15 minutes
         self.alpha_vantage_key = alpha_vantage_key or os.getenv("ALPHA_VANTAGE_KEY")
+        
+        # Debug: Print API key status
+        print(f"[DEBUG] EventAnalyzer initialized with Alpha Vantage key: {'SET' if self.alpha_vantage_key and self.alpha_vantage_key != 'your_alphavantage_key_here' else 'NOT SET or DEFAULT'}")
+        if self.alpha_vantage_key and self.alpha_vantage_key != 'your_alphavantage_key_here':
+            print(f"[DEBUG] Alpha Vantage key starts with: {self.alpha_vantage_key[:8]}...")
 
     def _download_from_alpha_vantage(self, ticker: str) -> pd.DataFrame:
         """Download historical data from Alpha Vantage (more reliable than yfinance)"""
@@ -42,7 +47,14 @@ class EventAnalyzer:
             data = response.json()
 
             if "Time Series (Daily)" not in data:
-                print(f"  Alpha Vantage error: {data.get('Note', data.get('Error Message', 'Unknown'))}")
+                error_msg = data.get('Note', data.get('Error Message', data.get('Information', 'Unknown')))
+                print(f"  Alpha Vantage error: {error_msg}")
+                
+                # Check for rate limit specifically
+                if "rate limit" in error_msg.lower() or "25 requests per day" in error_msg:
+                    print(f"  ⚠️  RATE LIMIT HIT: Alpha Vantage free tier allows only 25 requests/day")
+                    print(f"  📝 Consider upgrading to premium or using yfinance fallback")
+                
                 return pd.DataFrame()
 
             # Convert to DataFrame
@@ -201,6 +213,9 @@ class EventAnalyzer:
         """
         Get past earnings events and their analysis using real historical price data
         """
+        print(f"[DEBUG] get_past_earnings_events called for {ticker}")
+        print(f"[DEBUG] Alpha Vantage key available: {'YES' if self.alpha_vantage_key and self.alpha_vantage_key != 'your_alphavantage_key_here' else 'NO'}")
+        
         # Check cache first
         cache_key = f"past_events_{ticker}"
         if cache_key in self.cache:
@@ -284,6 +299,9 @@ class EventAnalyzer:
         """
         Get upcoming events for a ticker using Alpha Vantage earnings calendar
         """
+        print(f"[DEBUG] get_upcoming_events called for {ticker}")
+        print(f"[DEBUG] Alpha Vantage key available: {'YES' if self.alpha_vantage_key and self.alpha_vantage_key != 'your_alphavantage_key_here' else 'NO'}")
+        
         # Check cache first
         cache_key = f"upcoming_events_{ticker}"
         if cache_key in self.cache:
@@ -307,6 +325,14 @@ class EventAnalyzer:
                 response = requests.get(url, params=params, timeout=10)
 
                 if response.status_code == 200:
+                    # Check if response contains rate limit message
+                    if "rate limit" in response.text.lower() or "25 requests per day" in response.text:
+                        print(f"  ⚠️  RATE LIMIT HIT: Alpha Vantage earnings calendar rate limited")
+                        print(f"  📝 Using mock data for upcoming events")
+                        result = self._generate_mock_upcoming_events(ticker)
+                        self.cache[cache_key] = (result, datetime.now())
+                        return result
+                    
                     # Parse CSV response
                     from io import StringIO
                     import csv
@@ -332,6 +358,8 @@ class EventAnalyzer:
                         print(f"  SUCCESS! Found {len(upcoming_events)} real upcoming earnings")
                         self.cache[cache_key] = (upcoming_events[:3], datetime.now())
                         return upcoming_events[:3]
+                    else:
+                        print(f"  No upcoming earnings found, using mock data")
 
             # Fallback to mock data
             print(f"  Using estimated earnings dates for {ticker}")
