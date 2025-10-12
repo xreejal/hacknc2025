@@ -26,7 +26,7 @@ export default function NewsFeed({ articles }: NewsFeedProps) {
 
   return (
     <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-6">
-      <h2 className="font-black text-2xl text-white mb-4 tracking-tight">
+      <h2 className="font-black text-3xl text-white mb-6 tracking-tight">
         NEWS <span className="text-gradient-purple">FEED</span>
       </h2>
       <div className="space-y-4">
@@ -41,24 +41,24 @@ export default function NewsFeed({ articles }: NewsFeedProps) {
                   href={article.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-lg font-semibold text-white hover:text-purple transition-colors group flex items-start gap-2"
+                  className="text-xl font-semibold text-white hover:text-purple transition-colors group flex items-start gap-2"
                 >
                   {article.title}
                   <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-purple transition-colors" />
                 </a>
-                <p className="text-sm text-gray-400 mt-1">{article.summary}</p>
-                <div className="flex items-center gap-3 mt-2">
-                  <span className="text-xs font-bold text-purple font-mono">
+                <p className="text-base text-gray-400 mt-2">{article.summary}</p>
+                <div className="flex items-center gap-3 mt-3">
+                  <span className="text-sm font-bold text-purple font-mono">
                     {article.ticker}
                   </span>
                   <span
-                    className={`text-xs px-2 py-1 rounded border ${getSentimentColor(
+                    className={`text-sm px-3 py-1 rounded border ${getSentimentColor(
                       article.sentiment
                     )}`}
                   >
                     {article.sentiment}
                   </span>
-                  <span className="text-xs text-gray-500 font-mono">
+                  <span className="text-sm text-gray-500 font-mono">
                     {format(new Date(article.published_at), "MMM dd, yyyy")}
                   </span>
                 </div>
