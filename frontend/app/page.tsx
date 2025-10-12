@@ -6,6 +6,7 @@ import AddStockForm from "@/components/AddStockForm";
 import { InteractiveGrid } from "@/components/InteractiveGrid";
 import { TrendingUp, Search } from "lucide-react";
 import { stockList } from "@/lib/stockList";
+import AgentChat from "@/components/AgentChat";
 
 export default function Home() {
   const [trackedStocks, setTrackedStocks] = useState<string[]>([]);
@@ -25,7 +26,7 @@ export default function Home() {
       <InteractiveGrid />
       
       {/* Header */}
-      <header className="relative z-50 bg-black/80 backdrop-blur-xl border-white/10 border-b w-full">
+      <header className="z-50 relative bg-black/80 backdrop-blur-xl border-white/10 border-b w-full">
         <div className="absolute inset-x-0 bg-gradient-to-r from-transparent via-purple to-transparent h-px" />
         
         <div className="mx-auto px-4 container">
@@ -48,9 +49,9 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto px-4 py-6 container">
+      <main className="z-10 relative mx-auto px-4 py-6 container">
         <div className="mb-8">
-          <h1 className="font-black text-4xl tracking-tight mb-2">
+          <h1 className="mb-2 font-black text-4xl tracking-tight">
             SMART <span className="text-gradient-purple">FINANCIAL</span> TRACKER
           </h1>
           <p className="text-gray-400">
@@ -66,6 +67,12 @@ export default function Home() {
           trackedStocks={trackedStocks}
           onRemoveStock={handleRemoveStock}
         />
+
+        {/* Agent Chat */}
+        <div className="mt-10">
+          <h2 className="mb-3 font-semibold text-xl">WealthVisor Chat</h2>
+          <AgentChat />
+        </div>
       </main>
     </div>
   );
