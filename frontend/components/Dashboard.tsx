@@ -111,14 +111,25 @@ export default function Dashboard({ trackedStocks, onRemoveStock }: DashboardPro
             TRACKED <span className="text-gradient-purple">STOCKS</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {trackedStocks.map((ticker) => (
-              <StockCard
+            {trackedStocks.map((ticker, index) => (
+              <div 
                 key={ticker}
-                ticker={ticker}
-                pastEvents={pastEvents[ticker] || []}
-                upcomingEvents={upcomingEvents[ticker] || []}
-                onRemove={() => onRemoveStock(ticker)}
-              />
+                className={`card-animate ${
+                  index === 0 ? 'card-animate-delay-100' :
+                  index === 1 ? 'card-animate-delay-200' :
+                  index === 2 ? 'card-animate-delay-300' :
+                  index === 3 ? 'card-animate-delay-400' :
+                  index === 4 ? 'card-animate-delay-500' :
+                  'card-animate-delay-100'
+                }`}
+              >
+                <StockCard
+                  ticker={ticker}
+                  pastEvents={pastEvents[ticker] || []}
+                  upcomingEvents={upcomingEvents[ticker] || []}
+                  onRemove={() => onRemoveStock(ticker)}
+                />
+              </div>
             ))}
           </div>
         </div>

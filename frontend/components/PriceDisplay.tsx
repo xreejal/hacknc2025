@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { getPriceData } from "@/lib/api";
 import type { PriceData } from "@/lib/api";
 import { TrendingUp, TrendingDown, DollarSign, X, BarChart3 } from "lucide-react";
@@ -57,8 +58,8 @@ export default function PriceDisplay({ ticker, onClose }: PriceDisplayProps) {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8 max-w-md w-full mx-4">
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+        <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8 max-w-md w-full">
           <div className="text-center">
             <div className="animate-spin w-8 h-8 border-2 border-purple border-t-transparent rounded-full mx-auto mb-4"></div>
             <p className="text-gray-400">Loading price data...</p>
@@ -70,8 +71,8 @@ export default function PriceDisplay({ ticker, onClose }: PriceDisplayProps) {
 
   if (error || !priceData) {
     return (
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8 max-w-md w-full mx-4">
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+        <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8 max-w-md w-full">
           <div className="text-center">
             <X className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h3 className="font-black text-xl text-white mb-2">Error</h3>
@@ -118,8 +119,8 @@ export default function PriceDisplay({ ticker, onClose }: PriceDisplayProps) {
   const monthChange = formatChange(priceData.change_1m, priceData.change_1m_percent);
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8 max-w-2xl w-full mx-4">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+      <div className="bg-black/40 backdrop-blur-sm border-white/10 rounded-lg p-8 max-w-2xl w-full">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
@@ -236,12 +237,13 @@ export default function PriceDisplay({ ticker, onClose }: PriceDisplayProps) {
       </div>
 
       {/* Chart Modal */}
-      {showChart && (
+      {showChart && typeof document !== 'undefined' && createPortal(
         <PriceChart
           ticker={ticker}
           period={showChart}
           onClose={() => setShowChart(null)}
-        />
+        />,
+        document.body
       )}
     </div>
   );

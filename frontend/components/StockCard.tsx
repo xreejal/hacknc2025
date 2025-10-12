@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import type { EventAnalysis, UpcomingEvent } from "@/lib/api";
 import { format } from "date-fns";
 import { TrendingUp, TrendingDown, X } from "lucide-react";
@@ -89,7 +90,13 @@ export default function StockCard({
               pastEvents.slice(0, 5).map((event, index) => (
                 <div
                   key={index}
-                  className="border-l-4 border-purple pl-3 py-2 bg-white/5 rounded hover:bg-white/10 transition-colors"
+                  className={`border-l-4 border-purple pl-3 py-2 bg-white/5 rounded hover:bg-white/10 transition-colors card-animate ${
+                    index === 0 ? 'card-animate-delay-100' :
+                    index === 1 ? 'card-animate-delay-200' :
+                    index === 2 ? 'card-animate-delay-300' :
+                    index === 3 ? 'card-animate-delay-400' :
+                    'card-animate-delay-500'
+                  }`}
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -134,7 +141,13 @@ export default function StockCard({
             upcomingEvents.map((event, index) => (
               <div
                 key={index}
-                className="border-l-4 border-purple pl-3 py-2 bg-white/5 rounded hover:bg-white/10 transition-colors"
+                className={`border-l-4 border-purple pl-3 py-2 bg-white/5 rounded hover:bg-white/10 transition-colors card-animate ${
+                  index === 0 ? 'card-animate-delay-100' :
+                  index === 1 ? 'card-animate-delay-200' :
+                  index === 2 ? 'card-animate-delay-300' :
+                  index === 3 ? 'card-animate-delay-400' :
+                  'card-animate-delay-500'
+                }`}
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -156,11 +169,12 @@ export default function StockCard({
       </div>
 
       {/* Price Modal */}
-      {showPriceModal && (
+      {showPriceModal && typeof document !== 'undefined' && createPortal(
         <PriceDisplay
           ticker={ticker}
           onClose={() => setShowPriceModal(false)}
-        />
+        />,
+        document.body
       )}
     </>
   );
