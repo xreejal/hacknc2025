@@ -134,7 +134,7 @@ class SentimentExplanationRequest(BaseModel):
     article: NewsArticle
 
 class VoiceNewsRequest(BaseModel):
-    tracked_stocks: List[str] = []
+    text: Optional[str] = None
     tracked_stocks: List[str] = []
 
 @app.get("/")
@@ -484,7 +484,7 @@ async def generate_ai_insights(tracked_stocks: List[str], stock_data: List[Dict]
         {', '.join(stock_summary)}
 
         Focus on recent trends, market sentiment, and potential factors driving the performance.
-        Keep it concise and professional for a financial news broadcast.
+        Keep it concise and professional for a financial news broadcast. make sure it is between 50 and 100 words.
         """
 
         # Generate AI insights
@@ -511,6 +511,18 @@ async def generate_ai_insights(tracked_stocks: List[str], stock_data: List[Dict]
     except Exception as e:
         print(f"Error generating AI insights: {e}")
         return "Market analysts remain cautious about near-term volatility"
+
+
+async def get_tracked_stocks() -> List[str]:
+    """Get tracked stocks from database or return default popular stocks"""
+    try:
+        # Try to get from database first
+        # For now, return some popular stocks as defaults
+        default_stocks = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "JPM", "JNJ", "V"]
+        return default_stocks
+    except Exception as e:
+        print(f"Error getting tracked stocks: {e}")
+        return ["AAPL", "MSFT", "GOOGL"]  # Fallback to basic tech stocks
 
 
 async def generate_watchlist_script(tracked_stocks: List[str]) -> str:
@@ -612,7 +624,9 @@ async def generate_watchlist_script(tracked_stocks: List[str]) -> str:
 
             script = ". ".join(filter(None, script_parts)) + "."
         else:
-            script = "Welcome to The Scoop, your financial news update. Your tracked stocks are showing mixed performance today. Market analysts remain cautious about near-term volatility. Stay tuned for more market insights and portfolio updates."
+            # Get default tracked stocks and generate dynamic script
+            tracked_stocks = await get_tracked_stocks()
+            script = await generate_watchlist_script(tracked_stocks)
 
         # Ensure script is around 100 words
         words = script.split()
@@ -629,35 +643,37 @@ async def generate_watchlist_script(tracked_stocks: List[str]) -> str:
 
     except Exception as e:
         print(f"Error generating watchlist script: {e}")
-        return "Welcome to The Scoop, your financial news update. Market conditions are showing mixed signals today. Stay tuned for more updates on your portfolio performance and market movements."
+        # Fallback to basic dynamic content even on error
+        try:
+            tracked_stocks = await get_tracked_stocks()
+            return await generate_watchlist_script(tracked_stocks)
+        except:
+            return "Welcome to The Scoop, your financial news update. Market conditions are showing mixed signals today. Stay tuned for more updates on your portfolio performance and market movements."
 
 
 @app.post("/voice-news")
 async def generate_voice_news(request: VoiceNewsRequest):
     """Generate voice news using ElevenLabs with dynamic content"""
-    """Generate voice news using ElevenLabs with dynamic content"""
     try:
         voice_id = "VR6AewLTigWG4xSOukaG"  # Josh - rare, distinctive male voice
 
-        # Generate dynamic script based on tracked stocks
-        if not request.tracked_stocks:
-            # General market script when no stocks are tracked
-            script = "Welcome to The Scoop, your financial news update. Today's market shows mixed signals as investors navigate economic uncertainty. Tech stocks are showing resilience while energy sectors face headwinds. The Federal Reserve's latest comments suggest cautious optimism. Stay tuned for more updates on your portfolio performance and market movements."
-        else:
-            # Generate script about tracked stocks
+        # Determine which script to use
+        if request.text:
+            # Use provided text directly (from frontend)
+            script = request.text
+            print(f"Using provided text for voice generation: {len(script)} characters")
+        elif request.tracked_stocks:
+            # Generate script about specific tracked stocks
             script = await generate_watchlist_script(request.tracked_stocks)
-
-        # Generate dynamic script based on tracked stocks
-        if not request.tracked_stocks:
-            # General market script when no stocks are tracked
-            script = "Welcome to The Scoop, your financial news update. Today's market shows mixed signals as investors navigate economic uncertainty. Tech stocks are showing resilience while energy sectors face headwinds. The Federal Reserve's latest comments suggest cautious optimism. Stay tuned for more updates on your portfolio performance and market movements."
+            print(f"Generated script for tracked stocks: {request.tracked_stocks}")
         else:
-            # Generate script about tracked stocks
-            script = await generate_watchlist_script(request.tracked_stocks)
+            # Get default tracked stocks and generate script
+            tracked_stocks = await get_tracked_stocks()
+            script = await generate_watchlist_script(tracked_stocks)
+            print(f"Generated script for default stocks: {tracked_stocks}")
 
         # Generate audio with professional news anchor characteristics
         audio = elevenlabs.generate(
-            text=script,
             text=script,
             voice=voice_id,
             model="eleven_multilingual_v2",
@@ -668,10 +684,10 @@ async def generate_voice_news(request: VoiceNewsRequest):
                 "use_speaker_boost": True
             }
         )
-
+        
         # Convert to bytes
         audio_bytes = b"".join(audio)
-
+        
         return Response(
             content=audio_bytes,
             media_type="audio/mpeg",
@@ -680,9 +696,49 @@ async def generate_voice_news(request: VoiceNewsRequest):
                 "Content-Length": str(len(audio_bytes))
             }
         )
-
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating voice: {str(e)}")
+
+
+@app.post("/voice-news/dynamic")
+async def generate_dynamic_voice_news():
+    """Generate voice news with dynamic stock content - no parameters needed"""
+    try:
+        voice_id = "VR6AewLTigWG4xSOukaG"  # Josh - rare, distinctive male voice
+        
+        # Get tracked stocks and generate dynamic script
+        tracked_stocks = await get_tracked_stocks()
+        script = await generate_watchlist_script(tracked_stocks)
+        print(f"Generated dynamic script for stocks: {tracked_stocks}")
+
+        # Generate audio with professional news anchor characteristics
+        audio = elevenlabs.generate(
+            text=script,
+            voice=voice_id,
+            model="eleven_multilingual_v2",
+            voice_settings={
+                "stability": 0.75,  # Good stability while preserving unique characteristics
+                "similarity_boost": 0.85,  # High similarity for clear pronunciation
+                "style": 0.4,  # Higher style to showcase the rare voice's distinctive qualities
+                "use_speaker_boost": True
+            }
+        )
+        
+        # Convert to bytes
+        audio_bytes = b"".join(audio)
+        
+        return Response(
+            content=audio_bytes,
+            media_type="audio/mpeg",
+            headers={
+                "Content-Disposition": "attachment; filename=financial_news.mp3",
+                "Content-Length": str(len(audio_bytes))
+            }
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating dynamic voice: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

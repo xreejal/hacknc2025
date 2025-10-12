@@ -108,7 +108,7 @@ export default function Sidebar({
                   <TrendingUp className="w-7 h-7 text-green" />
                   <div className="absolute inset-0 bg-green/50 blur-lg" />
                 </div>
-                <span className="font-black text-2xl tracking-tight text-green">STOCKLENS</span>
+                <span className="font-black text-2xl tracking-tight text-green">MoneyMoves</span>
               </motion.div>
             )}
           </AnimatePresence>

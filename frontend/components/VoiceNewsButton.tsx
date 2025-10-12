@@ -8,9 +8,6 @@ const VoiceNewsButton = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Warren Buffett style financial commentary (exactly 50 words)
-  const financialNews = "Welcome to The Scoop! Here's what's happening in today's markets. The Dow Jones is up 150 points, showing strong investor confidence. Apple just reported solid earnings, beating expectations with strong iPhone sales. Oil prices climbed 2% on supply concerns, while the Federal Reserve kept interest rates steady. Bitcoin reached $45,000, continuing its recent rally. European markets were mixed as investors weighed economic data. Stay tuned for more market insights and breaking financial news.";
-
   const handleVoiceNews = async () => {
     if (isPlaying) return;
     
@@ -18,13 +15,13 @@ const VoiceNewsButton = () => {
     setIsPlaying(true);
 
     try {
-      // Call the backend API through Next.js proxy
+      // Call the backend API to generate dynamic voice news
       const response = await fetch('/api/backend/voice-news', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: financialNews }),
+        body: JSON.stringify({}), // Empty body to trigger dynamic generation
         mode: 'cors', // Explicitly set CORS mode
       });
 
