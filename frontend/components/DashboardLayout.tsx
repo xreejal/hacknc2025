@@ -158,7 +158,7 @@ export default function DashboardLayout({
           />
 
           {/* Content Area */}
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto scrollbar-hide">
             <div className="p-4 lg:p-6">
               {/* Stock Pills - Always visible at top */}
               <div className="mb-6">
