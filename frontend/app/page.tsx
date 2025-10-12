@@ -5,6 +5,7 @@ import Dashboard from "@/components/Dashboard";
 import AddStockForm from "@/components/AddStockForm";
 import { InteractiveGrid } from "@/components/InteractiveGrid";
 import { TrendingUp, Search } from "lucide-react";
+import { stockList } from "@/lib/stockList";
 
 export default function Home() {
   const [trackedStocks, setTrackedStocks] = useState<string[]>([]);
@@ -58,7 +59,7 @@ export default function Home() {
         </div>
 
         <div className="mb-8">
-          <AddStockForm onAddStock={handleAddStock} />
+          <AddStockForm onAddStock={handleAddStock} stockList={stockList} />
         </div>
 
         <Dashboard
