@@ -1,10 +1,6 @@
 "use client";
 
-<<<<<<< HEAD
-import { Search } from "lucide-react";
-=======
 import { Search, TrendingUp } from "lucide-react";
->>>>>>> 886bbad2e39948efa330d20dbba3c0d3e5fc741e
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -42,14 +38,9 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
             <span className="font-black text-2xl tracking-tight text-green">MoneyMoves</span>
           </div>
 
-<<<<<<< HEAD
-          {/* Right Section - Empty */}
-          <div className="flex items-center gap-3">
-=======
           {/* Right Section - Powered by Gemini */}
           <div className="flex items-center gap-3">
             <span className="text-gray-400 text-sm font-medium">Powered by Gemini 2.5</span>
->>>>>>> 886bbad2e39948efa330d20dbba3c0d3e5fc741e
           </div>
         </div>
       </div>

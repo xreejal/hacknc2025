@@ -29,19 +29,56 @@ StockLens helps users track how past and upcoming events (earnings, Fed meetings
 
 ## Quick Start
 
-### Backend
+### Local Development
+
+#### Backend
 ```bash
 cd backend
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
-uvicorn main:app --reload
+
+# Configure environment variables
+# Copy env.example to .env and add your API keys (optional for demo)
+# The app works with mock data if no API keys are provided
+cp env.example .env
+
+# Run the backend
+python main.py
 ```
 
-### Frontend
+#### Frontend
 ```bash
 cd frontend
+
+# Install dependencies
 npm install
+
+# Configure environment variables
+# Copy env.example to .env.local and update backend URL
+cp env.example .env.local
+
+# Run development server
 npm run dev
 ```
+
+### Production Deployment
+
+For production deployment, see [DEPLOYMENT.md](./DEPLOYMENT.md) for complete instructions.
+
+**Quick Deploy:**
+1. **Backend**: Deploy to [Render](https://render.com) or [Railway](https://railway.app)
+2. **Frontend**: Deploy to [Vercel](https://vercel.com)
+3. **Configure**: Set environment variables in both platforms
 
 ## API Endpoints
 - `POST /add_ticker` - Add a stock to track
@@ -51,16 +88,37 @@ npm run dev
 - `GET /events/upcoming` - Get upcoming events
 
 ## Environment Variables
-Create `.env` files in both frontend and backend:
+
+Copy the example files and configure your environment variables:
+
+**Backend**
+```bash
+cd backend
+cp env.example .env
+# Edit .env with your API keys
+```
+
+**Frontend**
+```bash
+cd frontend
+cp env.example .env.local
+# Edit .env.local with your backend URL
+```
+
+### Required Variables
 
 **Backend (.env)**
-```
-DATABASE_URL=postgresql://user:pass@localhost/MoneyMoves
-NEWS_API_KEY=your_key
-ALPHA_VANTAGE_KEY=your_key
-```
+- `DATABASE_URL` - Database connection (default: SQLite)
+- `NEWS_API_KEY` - NewsAPI.org key (optional)
+- `FINNHUB_API_KEY` - Finnhub.io key (optional)
+- `ALPHA_VANTAGE_KEY` - Alpha Vantage key (optional)
+- `GEMINI_API_KEY` - Google Gemini key (optional)
+- `ELEVENLABS_API_KEY` - ElevenLabs key (optional)
 
 **Frontend (.env.local)**
-```
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
+- `NEXT_PUBLIC_API_URL` - Backend API URL (default: http://localhost:8000)
+- `GEMINI_API_KEY` - Google Gemini key (optional)
+- `GOOGLE_API_KEY` - Google API key (optional)
+- `ELEVENLABS_API_KEY` - ElevenLabs key (optional)
+
+> **Note**: The app works with mock data if no API keys are provided, perfect for demos!

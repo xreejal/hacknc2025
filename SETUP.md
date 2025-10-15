@@ -248,13 +248,23 @@ This makes it perfect for:
 
 ## Next Steps
 
-For production deployment:
-1. Set up proper API keys
-2. Configure PostgreSQL database
+### Production Deployment
+
+For complete deployment instructions, see [DEPLOYMENT.md](../DEPLOYMENT.md).
+
+**Quick Deploy Steps:**
+1. **Backend**: Deploy to [Render](https://render.com) or [Railway](https://railway.app)
+2. **Frontend**: Deploy to [Vercel](https://vercel.com)
+3. **Configure**: Set environment variables in both platforms
+4. **Test**: Verify all features work in production
+
+### Additional Features
+
+1. Set up proper API keys for real data
+2. Configure PostgreSQL database for production
 3. Add user authentication
-4. Deploy backend to Railway/Render/AWS
-5. Deploy frontend to Vercel/Netlify
-6. Add environment-specific configs
+4. Implement caching and rate limiting
+5. Add monitoring and error tracking
 
 ## Support
 
