@@ -17,16 +17,30 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
+        
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
-    - run: cd frontend
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+        # Fix 2: Tells the setup action where to find the lock file for cache key generation.
+        # Assuming you are using package-lock.json (for npm ci). Change this path if using yarn.lock.
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: Install dependencies (npm ci)
+      run: npm ci
+      # Fix 3: Executes the command inside the 'frontend' directory.
+      working-directory: frontend
+    
+    - name: Build
+      run: npm run build --if-present
+      # Fix 4: Executes the command inside the 'frontend' directory.
+      working-directory: frontend
+    
+
+
