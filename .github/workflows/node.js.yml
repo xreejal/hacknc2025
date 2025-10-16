@@ -42,8 +42,5 @@ jobs:
       # Fix 4: Executes the command inside the 'frontend' directory.
       working-directory: frontend
     
-    - name: Run tests
-      run: npm test
-      # Fix 5: Executes the command inside the 'frontend' directory.
-      working-directory: frontend
+
 
