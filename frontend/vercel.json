@@ -1,8 +1,7 @@
 {
 "version": 2,
 
-// The 'builds' array was removed to resolve the conflict with 'functions'.
-// Vercel will auto-detect the Next.js and Python builders.
+
 
 "env": {
 "NEXT_PUBLIC_API_URL": "@next_public_api_url",
@@ -16,7 +15,7 @@
 },
 
 "functions": {
-// This block is kept to preserve your desired maxDuration setting for functions.
+
 "app/api/**/*.ts": {
 "maxDuration": 30
 },
@@ -26,7 +25,7 @@
 },
 
 "routes": [
-// Routes are kept as they are necessary for routing traffic to the Python backend.
+
 {
 "src": "/api/backend/(.*)",
 "dest": "/api/backend/index.py"
