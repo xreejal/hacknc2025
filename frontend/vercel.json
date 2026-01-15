@@ -29,6 +29,10 @@
 {
 "src": "/api/backend/(.*)",
 "dest": "/api/backend/index.py"
+},
+{
+"src": "/((agent|add_ticker|fetch_news|analyze_event|events|price|chart|voice-news).*)$",
+"dest": "/api/backend/index.py"
 }
 ]
 }
